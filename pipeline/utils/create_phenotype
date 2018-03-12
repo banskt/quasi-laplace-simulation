@@ -13,6 +13,6 @@
             s|_SIMTYPE|${PHENO_SIM_TYPE}|g;
             s|_SO_PRE_|${SAMPLEPREFIX}|g;
             s|_C_PROP_|${C_PROP}|g;
-           " ${MASTER_JOBSUBDIR}/create_phenotype.bsub > ${PHENO_JOBNAME}.bsub
-    bsub < ${PHENO_JOBNAME}.bsub
+           " ${MASTER_BSUBDIR}/create_phenotype.bsub > ${PHENO_JOBNAME}.bsub
+    #bsub < ${PHENO_JOBNAME}.bsub
     # =================================================================================

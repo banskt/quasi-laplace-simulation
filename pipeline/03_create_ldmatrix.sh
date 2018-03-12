@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source CONFIG
+source PATHS
 
 RANDSTRING=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 4 | head -n 1`
 LD_JOBSUBDIR="${JOBSUBDIR}/ldjobs"
@@ -19,7 +19,7 @@ for STUDY in ${STUDYNAMES[@]}; do
          s|_LOCIDIR|${DOSAGEDIR}/${STUDY}|g;
          s|_LDSTORE|${LDSTORE}|g;
          s|_OUTDIR_|${OUTDIR}|g;
-         " ${MASTER_JOBSUBDIR}/ldstore.bsub > ${JOBNAME}.bsub
+         " ${MASTER_BSUBDIR}/ldstore.bsub > ${JOBNAME}.bsub
     bsub < ${JOBNAME}.bsub
 done
 
@@ -33,7 +33,7 @@ for LOCUSPREFIX in ${LOCIPREFIX[@]}; do
             s|_SIMDIR_|${THIS_SIMDIR}|g;
             s|_LDBASE_|${LDBASEDIR}|g;
             s|_LD_DIR_|${LDMAPDIR}|g;
-            " ${MASTER_JOBSUBDIR}/ldmap_weighted.bsub > ${WGT_LD_JOBNAME}.bsub
+            " ${MASTER_BSUBDIR}/ldmap_weighted.bsub > ${WGT_LD_JOBNAME}.bsub
     bsub -w "done(${LDSTORE_JOBNAME}*)" < ${WGT_LD_JOBNAME}.bsub
 done
 
@@ -46,7 +46,7 @@ sed "s|_JOBNAME|${JOBNAME}|g;
      s|_LOCIDIR|${DOSAGEDIR}/${STUDY}|g;
      s|_LDSTORE|${LDSTORE}|g;
      s|_OUTDIR_|${OUTDIR}|g;
-     " ${MASTER_JOBSUBDIR}/ldstore.bsub > ${JOBNAME}.bsub
+     " ${MASTER_BSUBDIR}/ldstore.bsub > ${JOBNAME}.bsub
 bsub < ${JOBNAME}.bsub
 
 cd ${CURDIR}

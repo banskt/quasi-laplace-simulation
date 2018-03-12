@@ -1,8 +1,18 @@
 #!/bin/bash
 
-source CONFIG
+CONFIGFILE=$1
+
+if [ -z ${CONFIGFILE} ] || [ ! -f ${CONFIGFILE} ]; then 
+    echo "Fatal! No configuration file found.";
+    echo "Use this script as: ./05_simulate.sh CONFIGFILE"
+    exit 1
+fi
+
+source ${CONFIGFILE}
+source PATHS
 
 SUBDIR="${CURDIR}/utils"
+JOBSUBDIR="${JOBSUBDIR}/${PHENO_SIM_TYPE}_${HERITABILITY}"
 #CHAIN_JOBS="True"
 CHAIN_JOBS="False"
 

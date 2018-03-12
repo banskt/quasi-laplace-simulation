@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source CONFIG
+source PATHS
 
 cd ${DOSAGEDIR}/combined
 
