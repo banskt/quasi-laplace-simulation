@@ -32,7 +32,7 @@ for LOCUSPREFIX in ${LOCIPREFIX[@]}; do
             s|_SAMPLES|\"${STUDYSAMPLES[*]}\"|g;
             s|_SIMDIR_|${THIS_SIMDIR}|g;
             s|_LDBASE_|${LDBASEDIR}|g;
-            s|_LD_DIR_|${LDMAPDIR}|g;
+            s|_LD_DIR_|${LDMAPWGHTDIR}|g;
             " ${MASTER_BSUBDIR}/ldmap_weighted.bsub > ${WGT_LD_JOBNAME}.bsub
     bsub -w "done(${LDSTORE_JOBNAME}*)" < ${WGT_LD_JOBNAME}.bsub
 done

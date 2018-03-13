@@ -2,7 +2,6 @@ import os
 import numpy as np
 import scipy.stats
 import argparse
-import glob
 import matplotlib
 matplotlib.use('Agg') # Must be before importing matplotlib.pyplot or pylab!
 import matplotlib.pyplot as plt

@@ -11,6 +11,7 @@ SIMDIR=_SIMDIR_
 STUDY=_GSTUDY_
 SNPTEST=_SNPTEST
 LOCIDIR=_LOCIDIR
+USELOCI=_USELOCI
 
 SAMPLEFILE="${SIMDIR}/samples/${STUDY}/phenotypes.sample"
 OUTDIR="${SIMDIR}/snptest/${STUDY}"
@@ -20,9 +21,8 @@ if [ ! -d ${OUTDIR} ]; then
     mkdir -p ${OUTDIR}
 fi
 
-for file in `ls ${GENODIR}/*.gen`; do
-    INFILE="$file"
-    OUTFILENAME="`basename ${INFILE} .gen`.out"
-    OUTFILE="${OUTDIR}/${OUTFILENAME}"
-    $SNPTEST -data $INFILE $SAMPLEFILE -o $OUTFILE -frequentist 1 -pheno pheno -method score
-done
+while read LOCUSPREFIX; do
+    INFILE="${GENODIR}/${LOCUSPREFIX}.gen"
+    OUTFILE="${OUTDIR}/${LOCUSPREFIX}.out"
+    ${SNPTEST} -data ${INFILE} ${SAMPLEFILE} -o ${OUTFILE} -frequentist 1 -pheno pheno -method score
+done < ${USELOCI}

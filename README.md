@@ -1,10 +1,11 @@
 # Simulation pipeline for validation of quasi-Laplace approximation
 
-We use B-LORE to perform quasi-Laplace approximation for multiple logistic regression.
-We compare quasi-Laplace multiple logistic regression with:
- * multiple probit regression (piMASS, GEMMA)
- * multiple logistic regression with linear approximation (FINEMAP)
- * multiple linear regression (piMASS)
+B-LORE uses quasi-Laplace approximation for multiple logistic regression.
+In this simulation pipeline, we compare quasi-Laplace multiple logistic regression with other methods:
+ * multiple probit regression (piMASS, GEMMA) using point-normal prior
+ * multiple logistic regression with linear approximation (FINEMAP) using point-normal prior
+ * multiple linear regression (piMASS, GEMMA) using point-normal prior
+ * simple logistic regression (SNPTEST)
 
 In our simulations, we vary the following parameters:
  * heritability (h)
@@ -21,12 +22,11 @@ We compare the posterior inclusion probabilities (PIPs) with the following setti
 We used the original genotype and sample files from the five GerMIFS studies (total 13082 patients)
 to select 40000 SNPs distributed over 200 loci as input.
 We performed the following tasks in this pipeline:
- - [x] find the SNPs which are common to all studies
- - [x] perform SNPTEST / META analysis with the original phenotype
- - [x] find the LD matrix for each loci (requires META analysis for proper ordering of SNPs)
- - [x] simulate the phenotype using different parameters
- - [ ] apply different methods
- - [ ] perform the analyses.
+ * create the loci using SNPs which are common to all studies
+ * perform SNPTEST / META analysis with the original phenotype
+ * find the LD matrix for each loci (requires META analysis for proper ordering of SNPs)
+ * simulate the phenotype using different parameters
+ * run SNPTEST / META, FINEMAP, PIMASS, GEMMA and BLORE on the data
 
 ## Input files
 The pipeline expects input genotype and phenotype to be organized in the following way:
@@ -43,3 +43,13 @@ However the ```{LOCUSPREFIX}``` should be exactly same in each study.
 The genotype and sample files are in the Oxford format.
 Additionally, the sample file should contain covariates called 'sex' and 'age'. 
 The binary phenotype should be in the last column, which should be named 'pheno'.
+
+## How to run
+The simulation can be run from the ```pipeline``` folder. Update the ```CONFIG``` and ```PATHS``` file and run:
+```
+./01_create_loci.sh
+./02_run_snptest_meta.sh
+./03_create_ldmatrix.sh
+./04_find_loci_with_max_snps.sh
+./05_simulate.sh CONFIG
+```

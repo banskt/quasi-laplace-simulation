@@ -1,0 +1,37 @@
+#!/bin/sh
+#BSUB -J _JOBNAME
+#BSUB -q mpi-short
+#BSUB -W 2:00
+#BSUB -o _JOBNAME.out
+#BSUB -e _JOBNAME.err
+#BSUB -R scratch
+#BSUB -R span[hosts=1]
+#BSUB -n 2
+#BSUB -a openmp
+
+SIMDIR=_SIMDIR_
+LOCUSPREFIX=_LOCUSP_
+LOCIDIR=_LOCIDIR
+NCAUSAL=_NCAUSAL
+MODEL=_MODEL__
+PIMASS=_PIMASS_
+
+GENODIR="${LOCIDIR}/combined"
+OUTDIR="${SIMDIR}/pimass/c${NCAUSAL}_1e6_${MODEL}"
+OUTPREFIX="${LOCUSPREFIX}"
+COMBINED_SAMPLEDIR="${SIMDIR}/samples/combined"
+
+BIMBAM_PHENO="${COMBINED_SAMPLEDIR}/phenotypes.sample.bimbam"
+BIMBAM_GENO="${GENODIR}/${LOCUSPREFIX}.matgen"
+BIMBAM_ANNOT="${GENODIR}/${LOCUSPREFIX}.matmap"
+MODEL_FLAG=""
+if [ ${MODEL} == "probit" ]; then MODEL_FLAG="-cc"; fi
+
+if [ ! -d ${OUTDIR} ]; then mkdir -p ${OUTDIR}; fi
+
+CWD=`pwd`
+cd ${OUTDIR}
+echo "Program Start: " `date +%s`
+$PIMASS -g ${BIMBAM_GENO} -p ${BIMBAM_PHENO} -pos ${BIMBAM_ANNOT} -o ${OUTPREFIX} -w 100000 -s 1000000 -num 100 -smax ${NCAUSAL} ${MODEL_FLAG}
+echo "Program End: " `date +%s`
+cd ${CWD}

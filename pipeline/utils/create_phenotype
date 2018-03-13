@@ -14,5 +14,5 @@
             s|_SO_PRE_|${SAMPLEPREFIX}|g;
             s|_C_PROP_|${C_PROP}|g;
            " ${MASTER_BSUBDIR}/create_phenotype.bsub > ${PHENO_JOBNAME}.bsub
-    #bsub < ${PHENO_JOBNAME}.bsub
+    bsub < ${PHENO_JOBNAME}.bsub
     # =================================================================================

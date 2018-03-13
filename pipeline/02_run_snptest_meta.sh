@@ -9,7 +9,7 @@ SNPTEST_JOBSUBDIR="${JOBSUBDIR}/metaanalysis"
 for STUDY in ${STUDYNAMES[@]}; do
     SAMPLEDIR="${THIS_SIMDIR}/samples/${STUDY}"
     if [ ! -d ${SAMPLEDIR} ]; then mkdir -p ${SAMPLEDIR}; fi
-    cp ${DOSAGEDIR}/${STUDY}/*_age.sample ${SAMPLEDIR}/phenotypes.sample
+    cp ${DOSAGEDIR}/${STUDY}/${STUDY}${SAMPLEPREFIX}.sample ${SAMPLEDIR}/phenotypes.sample
 done
 
 if [ ! -d ${SNPTEST_JOBSUBDIR} ]; then mkdir -p ${SNPTEST_JOBSUBDIR}; fi
@@ -22,7 +22,9 @@ for STUDY in ${STUDYNAMES[@]}; do
          s|_SIMDIR_|${THIS_SIMDIR}|g;
          s|_GSTUDY_|${STUDY}|g;
          s|_SNPTEST|${SNPTEST}|g;
-         s|_LOCIDIR|${DOSAGEDIR}|" ${MASTER_BSUBDIR}/snptest.bsub > ${JOBNAME}.bsub
+         s|_LOCIDIR|${DOSAGEDIR}|g;
+         s|_USELOCI|${LOCUSNAMES}|g;
+        " ${MASTER_BSUBDIR}/snptest.bsub > ${JOBNAME}.bsub
     bsub < ${JOBNAME}.bsub
 done
 
@@ -33,7 +35,8 @@ sed "s|_JOBNAME|${META_JOBNAME}|g;
      s|_SAMPLES|\"${STUDYSAMPLES[*]}\"|g;
      s|_LOCUSN_|${LOCUSNAMES}|g;
      s|_SCRIPT_|${GENINF}|g;
-     s|__META__|${META}|g;" ${MASTER_BSUBDIR}/meta.bsub > ${META_JOBNAME}.bsub
+     s|__META__|${META}|g;
+    " ${MASTER_BSUBDIR}/meta.bsub > ${META_JOBNAME}.bsub
 bsub -w "done(${SNPTEST_JOBNAME}*)" < ${META_JOBNAME}.bsub
 
 cd ${CURDIR}

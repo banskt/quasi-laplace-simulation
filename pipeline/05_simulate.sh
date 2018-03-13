@@ -13,8 +13,6 @@ source PATHS
 
 SUBDIR="${CURDIR}/utils"
 JOBSUBDIR="${JOBSUBDIR}/${PHENO_SIM_TYPE}_${HERITABILITY}"
-#CHAIN_JOBS="True"
-CHAIN_JOBS="False"
 
 for (( SIM=$START; SIM<=$END; SIM++ )); do
 
@@ -37,10 +35,18 @@ for (( SIM=$START; SIM<=$END; SIM++ )); do
     SNPTEST_JOBSUBDIR="snptest"
     FINEMAP_JOBSUBDIR="finemap"
     PIMASS_JOBSUBDIR="pimass"
+    GEMMA_JOBSUBDIR="gemma"
 
     BLORE_RESDIR="blore"
 
-    source ${SUBDIR}/create_phenotype
+    if [ "${bMakePheno}" = "true" ]; then source ${SUBDIR}/create_phenotype; fi
+    if [ "${bBloreSumm}" = "true" ]; then source ${SUBDIR}/blore_summary; fi
+    if [ "${bBloreMeta}" = "true" ]; then source ${SUBDIR}/blore_meta; fi
+    if [ "${bSnptest}"   = "true" ]; then source ${SUBDIR}/snptest; fi
+    if [ "${bMeta}"      = "true" ]; then source ${SUBDIR}/meta; fi
+    if [ "${bFinemap}"   = "true" ]; then source ${SUBDIR}/finemap; fi
+    if [ "${bPimass}"    = "true" ]; then source ${SUBDIR}/pimass; fi
+    if [ "${bGemma}"     = "true" ]; then source ${SUBDIR}/gemma; fi
 
     cd ${CURDIR}
 

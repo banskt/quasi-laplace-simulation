@@ -14,8 +14,6 @@ done
 
 ## ======= DO NOT CHANGE BELOW =======================
 
-IFS=$'\r\n' GLOBIGNORE='*' command eval 'LOCIPREFIX=($(cat ${LOCUSNAMES}))'
-
 cd ${THIS_JOBSUBDIR}
 
 for LOCUSPREFIX in ${LOCIPREFIX[@]}; do

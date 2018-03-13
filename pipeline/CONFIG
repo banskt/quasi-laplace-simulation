@@ -2,12 +2,24 @@
 
 START=1
 END=1
-HERITABILITY=0.6
+HERITABILITY=0.4
 C_PROP=0.005
 NSAMPLE_TOT=13082
 PHENO_SIM_TYPE="normal" # fixed, bimodal, studentsT, normal
-MUVAR="0"
-NCAUSAL="2 3"
+NCAUSAL="2"
 NPIMASS="2"
-MODEL_PIMASS="linear probit"
 NFINEMAP="2"
+NGEMMA="2"
+MODEL_PIMASS="linear probit"
+MODEL_GEMMA="linear probit"
+MUVAR="0"
+
+# Which methods to run?
+bMakePheno=false
+bBloreSumm=false
+bBloreMeta=false
+bSnptest=false
+bMeta=false
+bFinemap=false
+bPimass=false
+bGemma=true
