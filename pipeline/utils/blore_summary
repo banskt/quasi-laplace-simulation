@@ -14,6 +14,7 @@
              s|_USELOCI|${USELOCI}|g;
              s|_OUTDIR_|${BLORE_RESDIR}|g;
              s|_LOCIDIR|${DOSAGEDIR}|g;
+             s|_USE_COV|${USE_AGESEX}|g;
             " ${MASTER_BSUBDIR}/blore_summary.bsub > ${JOBNAME}.bsub
         if [ "${bMakePheno}" = "true" ]; then
             bsub -w "done(${PHENO_JOBNAME})" < ${JOBNAME}.bsub
@@ -22,5 +23,5 @@
         fi
     done
 
-    cd ..
+    cd ${THIS_JOBSUBDIR}
     # =================================================================================

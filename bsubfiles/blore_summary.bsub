@@ -15,6 +15,7 @@ SIMDIR=_SIMDIR_
 LOCIDIR=_LOCIDIR
 USELOCI=_USELOCI
 BLORE_DIRNAME=_OUTDIR_
+USE_AGESEX=_USE_COV
 
 SAMPLEFILE="${SIMDIR}/samples/${STUDY}/phenotypes.sample"
 OUTDIR="${SIMDIR}/${BLORE_DIRNAME}/summary_stat/${STUDY}"
@@ -31,4 +32,7 @@ while read LOCUSPREFIX; do
     GENOFILES+="${GENODIR}/${LOCUSPREFIX}.gen "
 done < ${USELOCI}
 
-$BLORE --summary --gen ${GENOFILES} --sample ${SAMPLEFILE} --out ${OUTDIR} --reg 0.01 --regoptim
+AGESEX_MOD=""
+if [ "${USE_AGESEX}" = "true" ]; then AGESEX_MOD="--cov sex age"; fi
+
+$BLORE --summary --gen ${GENOFILES} --sample ${SAMPLEFILE} --out ${OUTDIR} --reg 0.01 --regoptim ${AGESEX_MOD}

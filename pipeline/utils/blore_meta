@@ -16,7 +16,7 @@
                  s|_OUTDIR_|${BLORE_RESDIR}|g;
                  s|_B_LORE_|${BLORE}|g;
                 " ${MASTER_BSUBDIR}/blore_without_features.bsub > ${BLORE_META_JOBNAME}.bsub
-            if [ "${bBloreSumm}" = "true" ];
+            if [ "${bBloreSumm}" = "true" ]; then
                 bsub -w "done(${BLORE_SUMMARY_JOBNAME}*)" < ${BLORE_META_JOBNAME}.bsub
             else
                 bsub < ${BLORE_META_JOBNAME}.bsub
@@ -24,4 +24,4 @@
         done
     done
 
-    cd ..
+    cd ${THIS_JOBSUBDIR}

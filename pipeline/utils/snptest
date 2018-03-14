@@ -13,6 +13,7 @@
              s|_SNPTEST|${SNPTEST}|g;
              s|_LOCIDIR|${DOSAGEDIR}|g;
              s|_USELOCI|${USELOCI}|g;
+             s|_USE_COV|${USE_AGESEX}|g;
             " ${MASTER_BSUBDIR}/snptest.bsub > ${JOBNAME}.bsub
         if [ "${bMakePheno}" = "true" ]; then
             bsub -w "done(${PHENO_JOBNAME})" < ${JOBNAME}.bsub
@@ -21,5 +22,5 @@
         fi
     done
 
-    cd ..
+    cd ${THIS_JOBSUBDIR}
     # =================================================================================

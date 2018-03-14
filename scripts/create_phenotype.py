@@ -87,6 +87,11 @@ def parse_args():
                         metavar='STR',
                         help='type of distribution to be used for effectsizes')
 
+    parser.add_argument('--agesex', 
+                        dest='use_agesex',
+                        action='store_true',
+                        help='whether to use age and sex as covariates')
+
     opts = parser.parse_args()
     return opts
 
@@ -243,20 +248,21 @@ beta *= np.sqrt( opts.sigma_herited_sq / np.sum(np.square(beta)) )
 for i, study in enumerate(studies):
     print ("Creating phenotype for cohort %s" % study)
 
-    # Create folders
+    # File paths
     outdir = os.path.join(sampledir, study)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
+    gendir = os.path.join(locidir, study)
+    insample = os.path.join(gendir, '{:s}{:s}.sample'.format(study, insampleprefix))
+    outsample = os.path.join(outdir, samplefilename)
 
     # Read genotype
-    gendir = os.path.join(locidir, study)
     nsample = samples[i]
     target_cases = int(nsample / 2.1)
     gt = read_genotype(gendir, snpinfo[i], nsample)
     gt_tot = np.concatenate(gt, axis=1)
     allrsid = [snp.rsid for locus in snpinfo[i] for snp in locus]  # flatten out the snpinfo.rsid
 
-    
     fname = os.path.join(outdir, effectfilename)
     mfile = open(fname, 'w')
     gtmask = np.zeros(gt_tot.shape[1], dtype=bool)
@@ -281,8 +287,24 @@ for i, study in enumerate(studies):
     # Get disease liabilities
     geno_eff = np.sum((beta_sel * gt_causal), axis=1)
     rand_var = np.sqrt(1 - opts.sigma_herited_sq)
-    rand_eff = np.random.normal(0, rand_var, gt_causal.shape[0])
-    liability = geno_eff + rand_eff
+    cov_eff = np.zeros(geno_eff.shape[0])
+    if opts.use_agesex:
+        age = np.loadtxt(insample, skiprows=2, usecols=6)
+        sex = np.loadtxt(insample, skiprows=2, usecols=5)
+        cov_eff[np.where(sex == 1)] = age[np.where(sex==1)] * 0.049 - 2.691
+        cov_eff[np.where(sex == 2)] = age[np.where(sex==2)] * 0.055 - 3.197
+        cov_var_male    = 0.049 * 0.049 * np.var(age[np.where(sex==1)])
+        cov_var_female  = 0.055 * 0.055 * np.var(age[np.where(sex==2)])
+        rand_var_male   = np.sqrt(max(0, 1 - opts.sigma_herited_sq - cov_var_male))
+        rand_var_female = np.sqrt(max(0, 1 - opts.sigma_herited_sq - cov_var_female))
+        rand_eff = np.zeros(geno_eff.shape[0])
+        rand_eff[np.where(sex == 1)] = np.random.normal(0, rand_var_male,   np.where(sex == 1)[0].shape[0])
+        rand_eff[np.where(sex == 2)] = np.random.normal(0, rand_var_female, np.where(sex == 2)[0].shape[0])
+        print ("Variance of the random term. Males: {:g} Females: {:g}\n".format(np.square(rand_var_male), np.square(rand_var_female)))
+    else:
+        rand_eff = np.random.normal(0, rand_var, geno_eff.shape[0])
+
+    liability = geno_eff + cov_eff + rand_eff
     # Select liabilities above the threshold of normal distribution truncating at K (disease prevalence)
     cutoff = scipy.stats.norm.ppf(1 - opts.prevalence)
     cases = np.where(liability >= cutoff)[0]
@@ -291,8 +313,6 @@ for i, study in enumerate(studies):
 
     # Copy the sample file with new phenotype
     k = 0
-    insample = os.path.join(gendir, '{:s}{:s}.sample'.format(study, insampleprefix))
-    outsample = os.path.join(outdir, samplefilename)
     with open(insample, 'r') as samfile, open(outsample, 'w') as outfile:
         line1 = samfile.readline()
         line2 = samfile.readline()
