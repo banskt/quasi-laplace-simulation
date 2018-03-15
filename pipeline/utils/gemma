@@ -18,15 +18,19 @@
                         s|_NCAUSAL|${NC}|g;
                         s|_MODEL__|${MODEL}|g;
                         s|_GEMMA__|${GEMMA}|g;
+                        s|_USE_COV|${USE_AGESEX}|g;
                        " ${MASTER_BSUBDIR}/gemma.bsub > ${GEMMA_JOBNAME}.bsub
-                if [ "${bMakePheno}" = "true" ]; then
-                    bsub -w "done(${PHENO_JOBNAME})" < ${GEMMA_JOBNAME}.bsub
+                if [ "${bRegCov}" = "true" ]; then 
+                    bsub -w "done(${REGRESS_JOBNAME})" < ${GEMMA_JOBNAME}.bsub
                 else
-                    bsub < ${GEMMA_JOBNAME}.bsub
+                    if [ "${bMakePheno}" = "true" ]; then
+                        bsub -w "done(${PHENO_JOBNAME})" < ${GEMMA_JOBNAME}.bsub
+                    else
+                        bsub < ${GEMMA_JOBNAME}.bsub
+                    fi
                 fi
             done < ${USELOCI}
             cd ${THIS_JOBSUBDIR}
         done
     done
     # =================================================================================
-    #                   s|_USE_COV|${USE_AGESEX}|g;

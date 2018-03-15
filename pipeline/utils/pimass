@@ -17,12 +17,17 @@
                         s|_LOCIDIR|${DOSAGEDIR}|g;
                         s|_NCAUSAL|${NC}|g;
                         s|_MODEL__|${MODEL}|g;
+                        s|_USE_COV|${USE_AGESEX}|g;
                         s|_PIMASS_|${PIMASS}|g;
                        " ${MASTER_BSUBDIR}/pimass.bsub > ${PIMASS_JOBNAME}.bsub
-                if [ "${bMakePheno}" = "true" ]; then
-                    bsub -w "done(${PHENO_JOBNAME})" < ${PIMASS_JOBNAME}.bsub
+                if [ "${bRegCov}" = "true" ]; then
+                    bsub -w "done(${REGRESS_JOBNAME})" < ${PIMASS_JOBNAME}.bsub
                 else
-                    bsub < ${PIMASS_JOBNAME}.bsub
+                    if [ "${bMakePheno}" = "true" ]; then
+                        bsub -w "done(${PHENO_JOBNAME})" < ${PIMASS_JOBNAME}.bsub
+                    else
+                        bsub < ${PIMASS_JOBNAME}.bsub
+                    fi
                 fi
             done < ${USELOCI}
             cd ${THIS_JOBSUBDIR}

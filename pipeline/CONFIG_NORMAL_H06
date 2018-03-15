@@ -1,8 +1,8 @@
 #!/bin/bash
 
-START=1
-END=20
-HERITABILITY=0.2
+START=41
+END=60
+HERITABILITY=0.6
 C_PROP=0.005
 NSAMPLE_TOT=13082
 PHENO_SIM_TYPE="normal" # fixed, bimodal, studentsT, normal
@@ -30,7 +30,7 @@ bGemma=false
 
 #bDeleteOld=true
 bMakePheno=true
-bRegCov=true
+#bRegCov=true
 bBloreSumm=true
 bBloreMeta=true
 bSnptest=true

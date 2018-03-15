@@ -23,8 +23,10 @@ for (( SIM=$START; SIM<=$END; SIM++ )); do
     THIS_JOBSUBDIR="${JOBSUBDIR}/${SIMFOLDER}"
     THIS_SIMDIR="${SIMDIR}/${SIMFOLDER}"
 
-    ##if [   -d ${THIS_JOBSUBDIR} ]; then rm -rf ${THIS_JOBSUBDIR}; fi
-    ##if [   -d ${THIS_SIMDIR} ];    then rm -rf ${THIS_SIMDIR};    fi
+    if [ "${bDeleteOld}" = "true" ]; then
+        if [   -d ${THIS_JOBSUBDIR} ]; then rm -rf ${THIS_JOBSUBDIR}; fi
+        if [   -d ${THIS_SIMDIR} ];    then rm -rf ${THIS_SIMDIR};    fi
+    fi
 
     if [ ! -d ${THIS_JOBSUBDIR} ]; then mkdir -p ${THIS_JOBSUBDIR}; fi
     if [ ! -d ${THIS_SIMDIR} ];    then mkdir -p ${THIS_SIMDIR};    fi
@@ -34,6 +36,7 @@ for (( SIM=$START; SIM<=$END; SIM++ )); do
     BLORE_JOBSUBDIR="blore"
     SNPTEST_JOBSUBDIR="snptest"
     FINEMAP_JOBSUBDIR="finemap"
+    PHENO_JOBSUBDIR="makepheno"
     PIMASS_JOBSUBDIR="pimass"
     GEMMA_JOBSUBDIR="gemma"
 
@@ -45,6 +48,7 @@ for (( SIM=$START; SIM<=$END; SIM++ )); do
     if [ "${bSnptest}"   = "true" ]; then source ${SUBDIR}/snptest; fi
     if [ "${bMeta}"      = "true" ]; then source ${SUBDIR}/meta; fi
     if [ "${bFinemap}"   = "true" ]; then source ${SUBDIR}/finemap; fi
+    if [ "${bRegCov}"    = "true" ]; then source ${SUBDIR}/regresscov; fi
     if [ "${bPimass}"    = "true" ]; then source ${SUBDIR}/pimass; fi
     if [ "${bGemma}"     = "true" ]; then source ${SUBDIR}/gemma; fi
 

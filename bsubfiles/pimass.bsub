@@ -9,12 +9,17 @@
 #BSUB -n 2
 #BSUB -a openmp
 
+
+
+
+
 SIMDIR=_SIMDIR_
 LOCUSPREFIX=_LOCUSP_
 LOCIDIR=_LOCIDIR
 NCAUSAL=_NCAUSAL
 MODEL=_MODEL__
 PIMASS=_PIMASS_
+USE_AGESEX=_USE_COV
 
 GENODIR="${LOCIDIR}/combined"
 OUTDIR="${SIMDIR}/pimass/c${NCAUSAL}_1e6_${MODEL}"
@@ -26,6 +31,11 @@ BIMBAM_GENO="${GENODIR}/${LOCUSPREFIX}.matgen"
 BIMBAM_ANNOT="${GENODIR}/${LOCUSPREFIX}.matmap"
 MODEL_FLAG=""
 if [ ${MODEL} == "probit" ]; then MODEL_FLAG="-cc"; fi
+
+if [ "${USE_AGESEX}" = "true" ]; then
+    MODEL_FLAG=""
+    BIMBAM_PHENO="${COMBINED_SAMPLEDIR}/phenotypes.sample.bimbam.covreg"
+fi
 
 if [ ! -d ${OUTDIR} ]; then mkdir -p ${OUTDIR}; fi
 

@@ -42,5 +42,6 @@ GENINF="${SCRIPTDIR}/genomic_inflation_factor.py"
 LDMAP_WEIGHTED="${SCRIPTDIR}/ldmap_weighted.py"
 CREATEPHENO="${SCRIPTDIR}/create_phenotype.py"
 CREATELOCI="${SCRIPTDIR}/create_loci.py"
+REGRESS_COVARIATES="${SCRIPTDIR}/regress_covariates.py"
 
 IFS=$'\r\n' GLOBIGNORE='*' command eval 'LOCIPREFIX=($(cat ${LOCUSNAMES}))'

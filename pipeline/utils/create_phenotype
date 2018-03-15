@@ -1,5 +1,9 @@
 #!/bin/bash
 
+    SPECIFIC_JOBSUBDIR="${THIS_JOBSUBDIR}/${PHENO_JOBSUBDIR}"
+    if [ ! -d ${SPECIFIC_JOBSUBDIR} ]; then mkdir -p ${SPECIFIC_JOBSUBDIR}; fi
+    cd ${SPECIFIC_JOBSUBDIR}
+
     # Create phenotype ================================================================
     PHENO_JOBNAME="pheno_${SIM}_${RANDSTRING}"
     sed -e "s|_JOBNAME|${PHENO_JOBNAME}|g;
@@ -17,3 +21,5 @@
            " ${MASTER_BSUBDIR}/create_phenotype.bsub > ${PHENO_JOBNAME}.bsub
     bsub < ${PHENO_JOBNAME}.bsub
     # =================================================================================
+
+    cd ${THIS_JOBSUBDIR}
