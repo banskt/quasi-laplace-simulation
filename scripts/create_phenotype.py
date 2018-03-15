@@ -92,6 +92,14 @@ def parse_args():
                         action='store_true',
                         help='whether to use age and sex as covariates')
 
+
+    parser.add_argument('-cr', '--ccratio',
+                        default=1.0,
+                        type=float,
+                        dest='ccratio',
+                        metavar='real',
+                        help='ratio of cases to controls, cannot be greater than 1 ')
+
     opts = parser.parse_args()
     return opts
 
@@ -194,6 +202,7 @@ if not os.path.exists(sampledir):
     os.makedirs(sampledir)
 effectfilename = 'snps.effectsize'
 samplefilename = 'phenotypes.sample'
+ccratio = opts.ccratio
 
 locusprefixes = read_locus_prefixes(opts.locusnames)
 nloci = len(locusprefixes)
@@ -310,6 +319,16 @@ for i, study in enumerate(studies):
     cases = np.where(liability >= cutoff)[0]
     pheno = np.zeros(nsample, dtype=int)
     pheno[cases] = 1
+    keepsample = np.ones(nsample, dtype=bool)
+    ncase = int(cases.shape[0])
+    nctrl = int(nsample - ncase)
+    if ccratio < 1.0:
+        ncase = int(nctrl * ccratio)
+        caseprob = 1 - scipy.stats.norm.pdf(liability[cases], 0, 1)
+        normed_caseprob = caseprob / np.sum(caseprob)
+        choosecase = np.random.choice(cases, size=ncase, replace=False, p=normed_caseprob)
+        droppedcase = np.array([x for x in cases if x not in choosecase])
+        keepsample[droppedcase] = False
 
     # Copy the sample file with new phenotype
     k = 0
@@ -319,11 +338,15 @@ for i, study in enumerate(studies):
         outfile.write(line1)
         outfile.write(line2)
         for line in samfile:
-            newpheno = line.strip()[:-1] + '{:g}\n'.format(pheno[k])
-            outfile.write(newpheno)
+            if keepsample[k]:
+                newpheno = line.strip()[:-1] + '{:g}\n'.format(pheno[k])
+                outfile.write(newpheno)
+            else:
+                newpheno = line.strip()[:-1] + 'NA\n'
+                outfile.write(newpheno)
             k += 1
 
     print ("Artificial phenotypes generated.")
-    print ("No. of cases:", np.sum(pheno))
-    print ("No.of controls:", nsample - np.sum(pheno))
+    print ("No. of cases:", ncase)
+    print ("No.of controls:", nctrl)
     print ()

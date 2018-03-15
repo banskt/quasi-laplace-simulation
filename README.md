@@ -15,7 +15,7 @@ In our simulations, we vary the following parameters:
 We compare the posterior inclusion probabilities (PIPs) with the following settings:
  - [ ] varying h = 0.2, 0.4, 0.6 and 0.8 (fixed c = 2, &lambda; = 1)
  - [ ] varying c = 2, 3, 4 and 5 (fixed h = 0.4, &lambda; = 1)
- - [ ] varying &lambda; = 0.5, 0.75, 1 (fixed h = 0.4, c = 2)
+ - [ ] varying &lambda; = 0.25, 0.50, 0.75, 1.00 (fixed h = 0.4, c = 2)
  - [ ] including covariates (fixed h = 0.4, c = 2, &lambda; = 1)
 
 ## Method
