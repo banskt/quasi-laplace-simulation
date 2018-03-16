@@ -14,7 +14,10 @@ source PATHS
 SUBDIR="${CURDIR}/utils"
 PLOT_JOBSUBDIR="${JOBSUBDIR}/getplots"
 CREDIBLE="true false"
-WHICH="blore finemap probit linear"
+WHICH=""
+if [ "${bBloreMeta}" = "true" ]; then WHICH+="blore "; fi
+if [ "${bFinemap}"   = "true" ]; then WHICH+="finemap "; fi
+if [ "${bPimass}"    = "true" ]; then WHICH+="${MODEL_PIMASS}"; fi
 
 OUTDIR="${POSTPROBDIR}/plots"
 
