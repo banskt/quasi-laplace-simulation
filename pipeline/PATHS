@@ -25,6 +25,7 @@ JOBSUBDIR="${CURDIR}/../jobsubs"
 LDBASEDIR="${BASEDIR}/ldmap"
 LDMAPWGHTDIR="${BASEDIR}/ldmap/weighted"
 LDMAPCOMBDIR="${BASEDIR}/ldmap/combined"
+POSTPROBDIR="${CURDIR}/../analysis/posterior_prob"
 
 # external programs required for the pipeline
 SNPTEST="${HOME}/packages/SNPTEST/snptest_v2.5.4-beta3_linux_x86_64_dynamic/snptest_v2.5.4-beta3"
@@ -43,5 +44,6 @@ LDMAP_WEIGHTED="${SCRIPTDIR}/ldmap_weighted.py"
 CREATEPHENO="${SCRIPTDIR}/create_phenotype.py"
 CREATELOCI="${SCRIPTDIR}/create_loci.py"
 REGRESS_COVARIATES="${SCRIPTDIR}/regress_covariates.py"
+PLOTPIP="${POSTPROBDIR}/plot_pip.py"
 
 IFS=$'\r\n' GLOBIGNORE='*' command eval 'LOCIPREFIX=($(cat ${LOCUSNAMES}))'

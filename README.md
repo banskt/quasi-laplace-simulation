@@ -13,7 +13,7 @@ In our simulations, we vary the following parameters:
  * ratio of cases to controls (&lambda;)
 
 We compare the posterior inclusion probabilities (PIPs) with the following settings:
- - [ ] varying h = 0.2, 0.4, 0.6 and 0.8 (fixed c = 2, &lambda; = 1)
+ - [x] varying h = 0.2, 0.4, 0.6 and 0.8 (fixed c = 2, &lambda; = 1)
  - [ ] varying c = 2, 3, 4 and 5 (fixed h = 0.4, &lambda; = 1)
  - [ ] varying &lambda; = 0.25, 0.50, 0.75, 1.00 (fixed h = 0.4, c = 2)
  - [ ] including covariates (fixed h = 0.4, c = 2, &lambda; = 1)
@@ -27,6 +27,7 @@ We performed the following tasks in this pipeline:
  * find the LD matrix for each loci (requires META analysis for proper ordering of SNPs)
  * simulate the phenotype using different parameters
  * run SNPTEST / META, FINEMAP, PIMASS, GEMMA and BLORE on the data
+ * plot the precision and recall values for each setting
 
 ## Input files
 The pipeline expects input genotype and phenotype to be organized in the following way:
@@ -52,4 +53,5 @@ The simulation can be run from the ```pipeline``` folder. Update the ```CONFIG``
 ./03_create_ldmatrix.sh
 ./04_find_loci_with_max_snps.sh
 ./05_simulate.sh CONFIG
+./06_getplots.sh CONFIG
 ```
