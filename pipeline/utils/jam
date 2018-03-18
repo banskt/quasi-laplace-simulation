@@ -1,0 +1,22 @@
+#!/bin/bash
+
+    # Run JAM  ========================================================================
+    if [ ! -d ${JAM_JOBSUBDIR} ];then mkdir ${JAM_JOBSUBDIR}; fi
+    cd ${JAM_JOBSUBDIR}
+
+    JAM_JOBNAME="jam_${SIM}_${RANDSTRING}"
+    sed "s|_JOBNAME|${JAM_JOBNAME}|g;
+         s|_SIMDIR_|${THIS_SIMDIR}|g;
+         s|_LOCUSN_|${USELOCI}|g;
+         s|_LOCIDIR|${DOSAGEDIR}|g;
+         s|_LD_DIR_|${LDMAPCOMBDIR}|g;
+         s|_R_JAM__|${JAMSCRIPT}|g;
+        " ${MASTER_BSUBDIR}/jam.bsub > ${JAM_JOBNAME}.bsub
+    if [ "${bMeta}" = "True" ]; then
+        bsub -w "done(${META_JOBNAME})" < ${JAM_JOBNAME}.bsub
+    else
+        bsub < ${JAM_JOBNAME}.bsub
+    fi
+
+    cd ${THIS_JOBSUBDIR}
+    # =================================================================================

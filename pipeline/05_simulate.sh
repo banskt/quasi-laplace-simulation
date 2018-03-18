@@ -39,6 +39,7 @@ for (( SIM=$START; SIM<=$END; SIM++ )); do
     PHENO_JOBSUBDIR="makepheno"
     PIMASS_JOBSUBDIR="pimass"
     GEMMA_JOBSUBDIR="gemma"
+    JAM_JOBSUBDIR="jam"
 
     BLORE_RESDIR="blore"
 
@@ -51,6 +52,7 @@ for (( SIM=$START; SIM<=$END; SIM++ )); do
     if [ "${bRegCov}"    = "true" ]; then source ${SUBDIR}/regresscov; fi
     if [ "${bPimass}"    = "true" ]; then source ${SUBDIR}/pimass; fi
     if [ "${bGemma}"     = "true" ]; then source ${SUBDIR}/gemma; fi
+    if [ "${bJam}"       = "true" ]; then source ${SUBDIR}/jam; fi
 
     cd ${CURDIR}
 

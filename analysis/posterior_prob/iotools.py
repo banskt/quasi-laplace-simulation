@@ -8,10 +8,12 @@ def read_simres(simdir, key, locusprefixes, causal_rsids, zmax, muvar):
     probit_path  = 'pimass/c{:d}_1e6_probit/output/{:s}.mcmc.txt'
     linear_path  = 'pimass/c{:d}_1e6_linear/output/{:s}.mcmc.txt'
     finemap_path = 'finemap/c{:d}/{:s}.snp'
+    jam_path     = 'jam/{:s}.out'
     if key == 'blore':   res = blore  (simdir, blore_path,   locusprefixes, causal_rsids, zmax, muvar)
     if key == 'finemap': res = finemap(simdir, finemap_path, locusprefixes, causal_rsids, zmax)
     if key == 'probit':  res = pimass (simdir, probit_path,  locusprefixes, causal_rsids, zmax)
     if key == 'linear':  res = pimass (simdir, linear_path,  locusprefixes, causal_rsids, zmax)
+    if key == 'jam':     res = jam    (simdir, jam_path,     locusprefixes, causal_rsids)
     return res
 
 
@@ -99,6 +101,29 @@ def finemap(simdir, filepath, locusprefixes, causal_rsids, zmax):
                 mlinesplit = mline.split()
                 rsid = mlinesplit[1]
                 prob = float(mlinesplit[3])
+                causality = 1 if rsid in causals else 0
+                mres = LDResult(locus = locus,
+                                rsid = rsid,
+                                stat = prob,
+                                ld = 1,
+                                causality = causality)
+                locusres.append(mres)
+        thisres.append(locusres)
+    return thisres
+
+
+def jam(simdir, filepath, locusprefixes, causal_rsids):
+    thires = list()
+    for locus in locusprefixes:
+        locusres = list()
+        outfile = os.path.join(simdir, filepath.format(locus))
+        causals = causal_rsids[locus]
+        with open(outfile, 'r') as mfile:
+            next(mfile)
+            for mline in mfile:
+                mlinesplit = mline.split()
+                rsid = mlinesplit[0]
+                prob = float(mlinesplit[1])
                 causality = 1 if rsid in causals else 0
                 mres = LDResult(locus = locus,
                                 rsid = rsid,

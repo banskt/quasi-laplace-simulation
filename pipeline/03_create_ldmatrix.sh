@@ -10,7 +10,7 @@ if [ ! -d ${LD_JOBSUBDIR} ];   then mkdir -p ${LD_JOBSUBDIR};   fi
 cd ${LD_JOBSUBDIR}
 
 LDSTORE_JOBNAME="ldmatrix_${RANDSTRING}"
-for STUDY in ${STUDYNAMES[@]}; do
+for STUDY in ${STUDYNAMES[@]} "combined"; do
     JOBNAME="${LDSTORE_JOBNAME}_${STUDY}"
     OUTDIR="${LDBASEDIR}/${STUDY}"
     sed "s|_JOBNAME|${JOBNAME}|g;
@@ -23,7 +23,7 @@ for STUDY in ${STUDYNAMES[@]}; do
     bsub < ${JOBNAME}.bsub
 done
 
-for LOCUSPREFIX in ${LOCIPREFIX[@]}; do
+while read LOCUSPREFIX; do
     WGT_LD_JOBNAME="weighted_LD_${LOCUSPREFIX}"
     sed -e "s|_JOBNAME|${WGT_LD_JOBNAME}|g;
             s|_WGHT_LD|${LDMAP_WEIGHTED}|g;
@@ -35,18 +35,6 @@ for LOCUSPREFIX in ${LOCIPREFIX[@]}; do
             s|_LD_DIR_|${LDMAPWGHTDIR}|g;
             " ${MASTER_BSUBDIR}/ldmap_weighted.bsub > ${WGT_LD_JOBNAME}.bsub
     bsub -w "done(${LDSTORE_JOBNAME}*)" < ${WGT_LD_JOBNAME}.bsub
-done
-
-STUDY="combined"
-JOBNAME="${LDSTORE_JOBNAME}_${STUDY}"
-OUTDIR="${LDBASEDIR}/${STUDY}"
-sed "s|_JOBNAME|${JOBNAME}|g;
-     s|_GSTUDY_|${STUDY}|g;
-     s|_USELOCI|${LOCUSNAMES}|g;
-     s|_LOCIDIR|${DOSAGEDIR}/${STUDY}|g;
-     s|_LDSTORE|${LDSTORE}|g;
-     s|_OUTDIR_|${OUTDIR}|g;
-     " ${MASTER_BSUBDIR}/ldstore.bsub > ${JOBNAME}.bsub
-bsub < ${JOBNAME}.bsub
+done < ${LOCUSNAMES}
 
 cd ${CURDIR}

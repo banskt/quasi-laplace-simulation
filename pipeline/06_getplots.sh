@@ -17,6 +17,7 @@ CREDIBLE="true false"
 WHICH=""
 if [ "${bBloreMeta}" = "true" ]; then WHICH+="blore "; fi
 if [ "${bFinemap}"   = "true" ]; then WHICH+="finemap "; fi
+if [ "${bJam}"       = "true" ]; then WHICH+="jam "; fi
 if [ "${bPimass}"    = "true" ]; then WHICH+="${MODEL_PIMASS}"; fi
 
 OUTDIR="${POSTPROBDIR}/plots"

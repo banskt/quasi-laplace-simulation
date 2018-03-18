@@ -16,8 +16,7 @@ done
 
 cd ${THIS_JOBSUBDIR}
 
-for LOCUSPREFIX in ${LOCIPREFIX[@]}; do
-
+while read LOCUSPREFIX; do
     JOBNAME="common_SNPs_${LOCUSPREFIX}"
     sed -e "s|_JOBNAME|${JOBNAME}|g;
             s|_SCRIPT_|${CREATELOCI}|g;
@@ -27,6 +26,6 @@ for LOCUSPREFIX in ${LOCIPREFIX[@]}; do
             s|_LOCIDO_|${REF_DOSAGEDIR}|g;
             s|_LOCIDN_|${DOSAGEDIR}|g;" ${MASTER_BSUBDIR}/create_loci.bsub > ${JOBNAME}.bsub
     bsub < ${JOBNAME}.bsub
-done
+done < ${LOCUSNAMES}
 
 cd ${CURDIR}

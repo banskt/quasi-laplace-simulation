@@ -23,7 +23,7 @@ def parse_args():
                         type=str,
                         dest='whichplot',
                         metavar='STR',
-                        help='list of methods, allowed values: blore, finemap, probit, linear')
+                        help='list of methods, allowed values: blore, finemap, probit, linear, jam')
 
     parser.add_argument('--basedir',
                         type=str,

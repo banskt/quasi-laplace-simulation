@@ -79,15 +79,17 @@ def save_prcplot(filename, data, xlim, ylim, xticks, yticks):
                'probit':  'BVSR probit',
                'linear':  'BVSR linear',
                'finemap': 'FINEMAP',
+               'jam':     'JAM',
               }
     
     mcolors = {'blore':   colors[4],
                'probit':  colors[2],
                'linear':  colors[3],
                'finemap': colors[1],
+               'jam':     colors[16],
               }
     
-    for key in ['blore', 'finemap', 'probit', 'linear']:
+    for key in ['blore', 'finemap', 'probit', 'linear', 'jam']:
         val = data[key]
         if not val == 0:
             if len(val[0]) > 0:

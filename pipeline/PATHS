@@ -5,6 +5,9 @@ CURDIR=`pwd`
 # Parameters
 STUDYNAMES=('G1' 'G2' 'G3' 'G4' 'G5')
 STUDYSAMPLES=('2139' '2420' '2472' '2084' '3967')
+OLDIFS=$IFS; IFS="+"
+NSAMPLE_TOT=`echo "${STUDYSAMPLES[*]}" | bc`
+IFS=$OLDIFS
 
 # data directories
 BASEDIR="/scratch/sbanerj/quasi_laplace_gwas"
@@ -44,6 +47,7 @@ LDMAP_WEIGHTED="${SCRIPTDIR}/ldmap_weighted.py"
 CREATEPHENO="${SCRIPTDIR}/create_phenotype.py"
 CREATELOCI="${SCRIPTDIR}/create_loci.py"
 REGRESS_COVARIATES="${SCRIPTDIR}/regress_covariates.py"
+JAMSCRIPT="${SCRIPTDIR}/jam.R"
 PLOTPIP="${POSTPROBDIR}/plot_pip.py"
 
-IFS=$'\r\n' GLOBIGNORE='*' command eval 'LOCIPREFIX=($(cat ${LOCUSNAMES}))'
+# if [ -f ${LOCUSNAMES} ]; then IFS=$'\r\n' GLOBIGNORE='*' command eval 'LOCIPREFIX=($(cat ${LOCUSNAMES}))'; IFS=$OLDIFS; fi
