@@ -12,7 +12,7 @@
          s|_LD_DIR_|${LDMAPCOMBDIR}|g;
          s|_R_JAM__|${JAMSCRIPT}|g;
         " ${MASTER_BSUBDIR}/jam.bsub > ${JAM_JOBNAME}.bsub
-    if [ "${bMeta}" = "True" ]; then
+    if [ "${bMeta}" = "true" ]; then
         bsub -w "done(${META_JOBNAME})" < ${JAM_JOBNAME}.bsub
     else
         bsub < ${JAM_JOBNAME}.bsub
