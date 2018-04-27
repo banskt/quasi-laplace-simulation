@@ -9,12 +9,13 @@
     sed -e "s|_JOBNAME|${PHENO_JOBNAME}|g;
             s|_LOCIDIR|${DOSAGEDIR}|g;
             s|_SIMDIR_|${THIS_SIMDIR}|g;
-            s|_LOCUSN_|${USELOCI}|g;
+            s|_LOCUSN_|${PHENO_SIM_LOCI}|g;
             s|_SCRIPT_|${CREATEPHENO}|g;
             s|_STUDYN_|\"${STUDYNAMES[*]}\"|g;
             s|_SAMPLES|\"${STUDYSAMPLES[*]}\"|g;
             s|_HGSQUR_|${HERITABILITY}|g;
             s|_SIMTYPE|${PHENO_SIM_TYPE}|g;
+            s|_CVAR_F_|${PHENO_RESTRICT}|g;
             s|_SO_PRE_|${SAMPLEPREFIX}|g;
             s|_C_PROP_|${C_PROP}|g;
             s|_USE_COV|${USE_AGESEX}|g;

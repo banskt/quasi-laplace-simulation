@@ -18,15 +18,20 @@ SAMPLES=_SAMPLES
 HG2=_HGSQUR_
 CPROP=_C_PROP_
 SIM_TYPE=_SIMTYPE
+RESTRICT=_CVAR_F_
 SAMPLEPREFIX=_SO_PRE_
 USE_AGESEX=_USE_COV
 CCRATIO=_CC_RAT_
 
 AGESEX_MOD=""
 if [ "${USE_AGESEX}" = "true" ]; then AGESEX_MOD="--agesex"; fi
+RESTRICT_MOD=""
+if [ "${RESTRICT}" = "cvar2" ]; then RESTRICT_MOD="--cvar --snpratios 0 20 15 10 5"; fi
+if [ "${RESTRICT}" = "cvar3" ]; then RESTRICT_MOD="--cvar --snpratios 0 10 15  5 2"; fi
+if [ "${RESTRICT}" = "cvar4" ]; then RESTRICT_MOD="--cvar --snpratios 0  5 10 15 2"; fi
 
 source $HOME/miniconda3/envs/py35/bin/activate py35
-python ${CREATEPHENO} -dl ${LOCIDIR} -ds ${SIMDIR} -fl ${LOCUSNAMES} -p ${CPROP} -hg ${HG2} -k 0.5 -st ${STUDYNAMES} -stn ${SAMPLES} -t ${SIM_TYPE} -sp ${SAMPLEPREFIX} -cr ${CCRATIO} ${AGESEX_MOD}
+python ${CREATEPHENO} -dl ${LOCIDIR} -ds ${SIMDIR} -fl ${LOCUSNAMES} -p ${CPROP} -hg ${HG2} -k 0.5 -st ${STUDYNAMES} -stn ${SAMPLES} -t ${SIM_TYPE} -sp ${SAMPLEPREFIX} -cr ${CCRATIO} ${AGESEX_MOD} ${RESTRICT_MOD}
 
 # create the combined phenotype directory and write the header for the combined sample file
 COMBINED_SAMPLEDIR="${SIMDIR}/samples/combined"

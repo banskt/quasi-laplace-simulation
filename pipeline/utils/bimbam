@@ -1,0 +1,29 @@
+#!/bin/bash
+
+    # Run BIMBAM =======================================================================
+    if [ ! -d ${BIMBAM_JOBSUBDIR} ]; then mkdir ${BIMBAM_JOBSUBDIR}; fi
+    cd ${BIMBAM_JOBSUBDIR}
+
+    for NC in ${NBIMBAM}; do
+        while read LOCUSPREFIX; do
+            JOBNAME="bimbam_c${NC}_${SIM}_${LOCUSPREFIX}_${RANDSTRING}"
+            BLORE_META_JOBNAME="blore_meta_${SIM}_${NC}_mu0_${RANDSTRING}"
+            sed "s|_JOBNAME|${JOBNAME}|g;
+                 s|_SIMDIR_|${THIS_SIMDIR}|g;
+                 s|_BIMBAM_|${BIMBAM}|g;
+                 s|_LOCIDIR|${DOSAGEDIR}|g;
+                 s|_LOCUSP_|${LOCUSPREFIX}|g;
+                 s|_NCAUSAL|${NC}|g;
+                 s|_BLR_RES|${BLORE_RESDIR}|g;
+                 s|_GET_PIP|${BIMBAMPIP}|g;
+                " ${MASTER_BSUBDIR}/bimbam.bsub > ${JOBNAME}.bsub
+            if [ "${bBloreMeta}" = "true" ]; then
+                bsub -w "done(${BLORE_META_JOBNAME}*)" < ${JOBNAME}.bsub
+            else
+                bsub < ${JOBNAME}.bsub
+            fi
+        done < ${USELOCI}
+    done
+
+    cd ${THIS_JOBSUBDIR}
+    # =================================================================================

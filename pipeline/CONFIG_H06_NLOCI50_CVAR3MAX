@@ -1,15 +1,18 @@
 #!/bin/bash
 
-START=241
-END=260
-HERITABILITY=0.4
+START=701
+END=750
+HERITABILITY=0.6
 C_PROP=0.005
+NLOCI=50
+NPHENO=50
 PHENO_SIM_TYPE="normal" # fixed, bimodal, studentsT, normal
-CASE_CONTROL_RATIO="0.75"
+PHENO_RESTRICT="cvar3"
+CASE_CONTROL_RATIO=1
 USE_AGESEX=false
-NCAUSAL="2"
+NCAUSAL="2 3 4"
 NPIMASS="2"
-NFINEMAP="2"
+NFINEMAP="2 5 10"
 NCAVIARBF="2"
 NGEMMA="2"
 NBIMBAM="2"
@@ -41,8 +44,8 @@ bBloreMeta=true
 bSnptest=true
 bMeta=true
 bFinemap=true
-bPimass=true
+#bPimass=true
 #bGemma=true
-bJam=true
-bBimbam=true
-bCaviarbf=true
+#bJam=true
+#bBimbam=true
+#bCaviarbf=true

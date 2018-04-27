@@ -13,11 +13,15 @@ source PATHS
 
 SUBDIR="${CURDIR}/utils"
 PLOT_JOBSUBDIR="${JOBSUBDIR}/getplots"
-CREDIBLE="true false"
+INSETFLAG="--inset"
+LEGENDFLAG="--legend"
+CREDIBLE="true"
 WHICH=""
 if [ "${bBloreMeta}" = "true" ]; then WHICH+="blore "; fi
 if [ "${bFinemap}"   = "true" ]; then WHICH+="finemap "; fi
-if [ "${bJam}"       = "true" ]; then WHICH+="jam "; fi
+##if [ "${bJam}"       = "true" ]; then WHICH+="jam "; fi
+##if [ "${bBimbam}"    = "true" ]; then WHICH+="bimbam "; fi
+if [ "${bMeta}"      = "true" ]; then WHICH+="snptest "; fi
 if [ "${bPimass}"    = "true" ]; then WHICH+="${MODEL_PIMASS}"; fi
 
 OUTDIR="${POSTPROBDIR}/plots"
@@ -30,13 +34,10 @@ for CRED in ${CREDIBLE}; do
     THISH2=`echo ${HERITABILITY} | tr -d .`
     THISL=`echo ${CASE_CONTROL_RATIO} | tr -d . | awk '{printf "%-3s", $1}' | tr ' ' '0'`
     OUTPREFIX="pip_prc_${PHENO_SIM_TYPE}_h${THISH2}_c${NCAUSAL}_l${THISL}"
-    if [ "${USE_AGESEX}" = "true" ]; then
-        OUTPREFIX="${OUTPREFIX}_cov"
-    fi
-    if [ "${CRED}" = "true" ]; then 
-        CREDFLAG="--credible"
-        OUTPREFIX="${OUTPREFIX}_cred"
-    fi
+
+    if [ ! -z ${NLOCI} ]; then OUTPREFIX="${OUTPREFIX}_${NPHENO}pheno_${NPHENO}summary_${NLOCI}loci"; USELOCI="${BASEDIR}/LOCUSNAMES.${NLOCI}NLOCI"; fi
+    if [ "${USE_AGESEX}" = "true" ]; then OUTPREFIX="${OUTPREFIX}_cov"; fi
+    if [ "${CRED}" = "true" ];       then OUTPREFIX="${OUTPREFIX}_cred"; CREDFLAG="--credible"; fi
     
     PLOT_JOBNAME="plot_${CONFIGFILE}_c${CRED}"
     sed "s|_JOBNAME|${PLOT_JOBNAME}|g;
@@ -44,8 +45,11 @@ for CRED in ${CREDIBLE}; do
          s|_E_N_D__|${END}|g;
          s|__OUTF__|${OUTDIR}/${OUTPREFIX}.pdf|g;
          s|__CRED__|\"${CREDFLAG}\"|g;
+         s|__INSET_|\"${INSETFLAG}\"|g;
+         s|_LEGEND_|\"${LEGENDFLAG}\"|g;
          s|_WHICH__|\"${WHICH}\"|g;
          s|_SIMDIR_|${SIMDIR}|g;
+         s|_LOCIDIR|${DOSAGEDIR}|g;
          s|_LOCUSF_|${USELOCI}|g;
          s|__CMAX__|${NCAUSAL}|g;
          s|_WORKDIR|${POSTPROBDIR}|g;

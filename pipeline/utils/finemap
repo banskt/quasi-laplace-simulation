@@ -4,7 +4,6 @@
     cd ${FINEMAP_JOBSUBDIR}
 
     for NC in ${NFINEMAP}; do
-        # Run FINEMAP =====================================================================
         FINEMAP_JOBNAME="finemap_c${NC}_${SIM}_${RANDSTRING}"
         sed "s|_JOBNAME|${FINEMAP_JOBNAME}|g;
              s|_SIMDIR_|${THIS_SIMDIR}|g;
@@ -19,6 +18,5 @@
         else
             bsub < ${FINEMAP_JOBNAME}.bsub
         fi
-        # =================================================================================
     done
-    cd ..
+    cd ${THIS_JOBSUBDIR}

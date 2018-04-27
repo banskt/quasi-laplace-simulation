@@ -1,0 +1,38 @@
+#!/bin/bash
+
+    if [ ! -d ${CAVIARBF_JOBSUBDIR} ]; then mkdir ${CAVIARBF_JOBSUBDIR}; fi
+    cd ${CAVIARBF_JOBSUBDIR}
+
+    for NC in ${NCAVIARBF}; do
+        CAVIARBF_JOBNAME="caviarbf_c${NC}_${SIM}_${RANDSTRING}"
+        BLORE_META_JOBNAME="blore_meta_${SIM}_${NC}_mu0_${RANDSTRING}"
+        sed "s|_JOBNAME|${CAVIARBF_JOBNAME}|g;
+             s|_SIMDIR_|${THIS_SIMDIR}|g;
+             s|_LD_DIR_|${LDMAPWGHTDIR}|g;
+             s|_NSAMTOT|${NSAMPLE_TOT}|g;
+             s|_NCAUSAL|${NC}|g;
+             s|_USELOCI|${USELOCI}|g;
+             s|_CVIARBF|${CAVIARBF}|g;
+             s|_MODSRCH|${MODEL_SEARCH}|g;
+             s|_BLR_RES|${BLORE_RESDIR}|g;
+             s|__BSIG__|${USE_BLORE_RES}|g;
+            " ${MASTER_BSUBDIR}/caviarbf.bsub > ${CAVIARBF_JOBNAME}.bsub
+        if [ "${USE_BLORE_RES}" = "true" ]; then
+            if [ "${bBloreMeta}" = "true" ]; then
+                if [ "${bMeta}" = "true" ]; then
+                    bsub -w "done(${BLORE_META_JOBNAME}*) && done(${META_JOBNAME})" < ${CAVIARBF_JOBNAME}.bsub
+                else
+                    bsub -w "done(${BLORE_META_JOBNAME}*)" < ${CAVIARBF_JOBNAME}.bsub
+                fi
+            else
+                bsub < ${CAVIARBF_JOBNAME}.bsub
+            fi
+        else
+            if [ "${bMeta}" = "true" ]; then
+                bsub -w "done(${META_JOBNAME})" < ${CAVIARBF_JOBNAME}.bsub
+            else
+                bsub < ${CAVIARBF_JOBNAME}.bsub
+            fi
+        fi
+    done
+    cd ${THIS_JOBSUBDIR}

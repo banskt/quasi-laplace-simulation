@@ -45,6 +45,13 @@ def parse_args():
                         metavar='INT',
                         help='list of numbers of samples in studies')
 
+    parser.add_argument('--snpratios',
+                        nargs='*',
+                        type=int,
+                        dest='ncratio',
+                        metavar='INT',
+                        help='ratio of loci with number of causal SNPs')
+
     parser.add_argument('-sp', '--sampleprefix',
                         default='_QC_age',
                         type=str,
@@ -91,6 +98,12 @@ def parse_args():
                         dest='use_agesex',
                         action='store_true',
                         help='whether to use age and sex as covariates')
+
+
+    parser.add_argument('--cvar',
+                        dest='use_cvar',
+                        action='store_true',
+                        help='whether to use predefined number of causal SNPs')
 
 
     parser.add_argument('-cr', '--ccratio',
@@ -188,6 +201,13 @@ def select_causal_snps(studies, snpinfo, snppool, locus, prob):
         select[select.index(snp)] = snp._replace(studies = present_in)
     return select
 
+def select_cvar_snps(studies, snpinfo, snppool, locus, nc):
+    select = random.sample(snppool, nc)
+    for snp in select:
+        present_in = [study for i, study in enumerate(studies) if snp in snpinfo[i][locus]]
+        select[select.index(snp)] = snp._replace(studies = present_in)
+    return select
+
 # ================= Phenotype simulation ===================
 
 opts = parse_args()
@@ -207,6 +227,19 @@ ccratio = opts.ccratio
 locusprefixes = read_locus_prefixes(opts.locusnames)
 nloci = len(locusprefixes)
 
+# Pick loci using fixed ratio if cvar is specified
+if opts.use_cvar:
+    nclist = [0 for l in locusprefixes]
+    ratios = opts.ncratio
+    lnums  = [int((nloci * x) / sum(ratios)) for x in ratios]
+    lnums[0] += nloci - sum(lnums)
+    locipool = [i for i in range(nloci)]
+    for i, x in enumerate(lnums):
+        lchoose = random.sample(locipool, x)
+        for l in lchoose:
+            locipool.remove(l)
+            nclist[l] = i + 1
+
 # Read all SNP info
 snpinfo = read_snps(locidir, studies, locusprefixes)
 snppool = get_snppool(snpinfo)
@@ -219,7 +252,10 @@ ncausal = 0
 fname = os.path.join(sampledir, opts.outfile)
 with open(fname, 'w') as mfile:
     for l, locus in enumerate(locusprefixes):
-        snps = select_causal_snps(studies, snpinfo, snppool[l], l, cprob)
+        if opts.use_cvar:
+            snps = select_cvar_snps(studies, snpinfo, snppool[l], l, nclist[l])
+        else:
+            snps = select_causal_snps(studies, snpinfo, snppool[l], l, cprob)
         ncausal += len(snps)
         if len(snps) > 0:
             causality[l] = 1

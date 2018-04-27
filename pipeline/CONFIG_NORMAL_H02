@@ -10,10 +10,13 @@ USE_AGESEX=false
 NCAUSAL="2"
 NPIMASS="2"
 NFINEMAP="2"
+NCAVIARBF="2"
 NGEMMA="2"
+NBIMBAM="2"
 MODEL_PIMASS="linear probit"
 MODEL_GEMMA="linear probit"
 MUVAR="0"
+USE_BLORE_RES=false
 
 # Which methods to run?
 bDeleteOld=false
@@ -27,6 +30,8 @@ bFinemap=false
 bPimass=false
 bGemma=false
 bJam=false
+bBimbam=false
+bCaviarbf=false
 
 #bDeleteOld=true
 bMakePheno=true
@@ -39,3 +44,5 @@ bFinemap=true
 bPimass=true
 #bGemma=true
 bJam=true
+bBimbam=true
+bCaviarbf=true

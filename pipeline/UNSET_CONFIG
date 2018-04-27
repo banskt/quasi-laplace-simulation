@@ -1,0 +1,32 @@
+#!/bin/bash
+
+unset START
+unset END
+unset NLOCI
+unset HERITABILITY
+unset C_PROP
+unset PHENO_SIM_TYPE
+unset CASE_CONTROL_RATIO
+unset USE_AGESEX
+unset NCAUSAL
+unset NPIMASS
+unset NFINEMAP
+unset NGEMMA
+unset NBIMBAM
+unset MODEL_PIMASS
+unset MODEL_GEMMA
+unset MUVAR
+unset USE_BLORE_RES
+
+unset bDeleteOld
+unset bMakePheno
+unset bRegCov
+unset bBloreSumm
+unset bBloreMeta
+unset bSnptest
+unset bMeta
+unset bFinemap
+unset bPimass
+unset bGemma
+unset bJam
+unset bBimbam

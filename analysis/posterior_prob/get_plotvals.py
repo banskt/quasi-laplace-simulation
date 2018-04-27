@@ -16,17 +16,25 @@ class LDResult(collections.namedtuple('_LDResult', INFO_FIELDS)):
 '''
 def precision_recall_threshold(data, ldcut = 1):
     # Number of threshold points = number of SNPs in each list
-    nsnps = max([len(x) for x in data])
-    xvals = np.linspace(0, nsnps, nsnps)
+    nsnps = [len([x for x in d if not np.isnan(x.stat)]) for d in data]
+    nsmax = max(nsnps)
+    xvals = np.linspace(0, nsmax, nsmax + 1)
     y1 = list()
     y2 = list()
 
-    for d in data:
-        _, _tpr, _ppv, _nsel, _, _, _, _ = roc.confusion_matrix(d, ldcut)
-        tpr_est = np.interp(xvals, _nsel, _tpr)
-        ppv_est = np.interp(xvals, _nsel, _ppv)
-        y1.append(tpr_est)
-        y2.append(ppv_est)
+    for i, d in enumerate(data):
+        if nsnps[i] > 0:
+            _, _tpr, _ppv, _nsel, _, _, _, _ = roc.confusion_matrix(d, ldcut)
+            tpr_est = np.interp(xvals, _nsel, _tpr)
+            ppv_est = np.interp(xvals, _nsel, _ppv)
+            y1.append(tpr_est)
+            y2.append(ppv_est)
+        else:
+            _, _tpr, _ppv, _nsel, _, _, _, _ = roc.confusion_matrix(d, ldcut)
+            tpr_est = np.interp(xvals, np.array([0]), np.array([0]))
+            ppv_est = np.interp(xvals, np.array([0, nsmax]), np.array([1, 0]))
+            y1.append(tpr_est)
+            y2.append(ppv_est)
 
     recall        = np.array(y1).mean(axis = 0)
     precision     = np.array(y2).mean(axis = 0)

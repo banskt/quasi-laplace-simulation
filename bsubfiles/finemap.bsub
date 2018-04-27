@@ -17,14 +17,8 @@ USELOCI=_USELOCI
 OUTDIR="${SIMDIR}/finemap/c${NC}"
 METADIR="${SIMDIR}/snptest/meta"
 
-if [ -d ${OUTDIR} ]; then
-    rm -rf ${OUTDIR}
-fi
-
-if [ ! -d ${OUTDIR} ]; then
-    mkdir -p ${OUTDIR}
-fi
-
+if [   -d ${OUTDIR} ]; then rm -rf ${OUTDIR}; fi
+if [ ! -d ${OUTDIR} ]; then mkdir -p ${OUTDIR}; fi
 CWD=`pwd`
 cd ${OUTDIR}
 

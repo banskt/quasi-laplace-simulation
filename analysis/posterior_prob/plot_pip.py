@@ -23,13 +23,19 @@ def parse_args():
                         type=str,
                         dest='whichplot',
                         metavar='STR',
-                        help='list of methods, allowed values: blore, finemap, probit, linear, jam')
+                        help='list of methods, allowed values: blore, finemap, probit, linear, jam, bimbam')
 
     parser.add_argument('--basedir',
                         type=str,
                         dest='basedir',
                         metavar='STR',
                         help='where to find the simulation directories')
+
+    parser.add_argument('--locidir',
+                        type=str,
+                        dest='locidir',
+                        metavar='STR',
+                        help='where to find the loci directories')
 
     parser.add_argument('--locusfile',
                         type=str,
@@ -61,6 +67,16 @@ def parse_args():
                         action='store_true',
                         help='if set, ranks each locus separately')
 
+    parser.add_argument('--inset',
+                        dest='plot_inset',
+                        action='store_true',
+                        help='if set, plots the inset of logistic vs linear model from combined study')
+
+    parser.add_argument('--legend',
+                        dest='plot_legend',
+                        action='store_true',
+                        help='if set, plots the legend')
+
 
     opts = parser.parse_args()
     return opts
@@ -70,6 +86,7 @@ opts = parse_args()
 locusfile = os.path.abspath(opts.locusfile)
 outfile = os.path.abspath(opts.outfile)
 basedir = os.path.abspath(opts.basedir)
+locidir = os.path.abspath(opts.locidir)
 
 if not os.path.exists(os.path.dirname(outfile)):
     os.makedirs(os.path.dirname(outfile))
@@ -83,7 +100,7 @@ for key in opts.whichplot:
 for sim in range(opts.startsim, opts.endsim + 1):
     simname = 'sim{:03d}'.format(sim)
     print ('Reading {:s}'.format(simname))
-    simdir = os.path.join( basedir, simname)
+    simdir = os.path.join(basedir, simname)
     causal_snps_file = os.path.join(simdir, 'samples', 'causal.snplist')
     causal_rsids = iotools.read_causal_rsids(causal_snps_file)
     for key in opts.whichplot:
@@ -104,11 +121,20 @@ for key in opts.whichplot:
         nmax = maxlen
     plotvals[key] = get_plotvals.precision_recall_threshold(data)
 
+if opts.plot_inset:
+    print('Reading data for logistic vs linear model inset')
+    simname = 'sim{:03d}'.format(opts.startsim)
+    simdir = os.path.join(basedir, simname)
+    snplistfile = os.path.join(simdir, 'samples/G1/snps.effectsize')
+    study = 'combined'
+    phenodf = iotools.read_inset_data(locidir, simdir, snplistfile, locusprefixes, study)
+else:
+    phenodf = None
 
-
+print ("Reading complete.")
 xlim = [0, int(0.15 * nmax)]
 ylim = [0, 0.9]
 xticks = None
-yticks = np.arange(0.1, 0.9, 0.1)
+yticks = np.arange(0, 0.9, 0.1)
 
-stylesheet.save_prcplot(outfile, plotvals, xlim, ylim, xticks, yticks)
+stylesheet.save_prcplot(outfile, plotvals, phenodf, xlim, ylim, xticks, yticks, opts.plot_legend, opts.plot_inset)

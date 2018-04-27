@@ -15,14 +15,18 @@ OUTFILE=__OUTF__
 CREDFLAG=__CRED__
 WHICH=_WHICH__
 BASEDIR=_SIMDIR_
+LOCIDIR=_LOCIDIR
 LOCUSFILE=_LOCUSF_
 CMAX=__CMAX__
 WORKDIR=_WORKDIR
 PLOTFILE=_PLT_PIP
+INSETFLAG=__INSET_
+LEGENDFLAG=_LEGEND_
 
 CURDIR=`pwd`
 
 cd ${WORKDIR}
 source $HOME/miniconda3/envs/py35/bin/activate py35
-python ${PLOTFILE} --whichplot ${WHICH} --basedir ${BASEDIR} --locusfile ${LOCUSFILE} --outfile ${OUTFILE} --start ${START} --end ${END} --cmax ${CMAX} ${CREDFLAG}
+python ${PLOTFILE} --whichplot ${WHICH} --basedir ${BASEDIR} --locidir ${LOCIDIR} --locusfile ${LOCUSFILE} --outfile ${OUTFILE} \
+                   --start ${START} --end ${END} --cmax ${CMAX} ${CREDFLAG} ${INSETFLAG} ${LEGENDFLAG}
 cd ${CURDIR}

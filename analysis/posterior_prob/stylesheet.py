@@ -1,10 +1,15 @@
 import numpy as np
 import collections
+
 import matplotlib
 matplotlib.use('Agg')
+matplotlib.rc('text', usetex=True)
+matplotlib.rcParams['text.latex.preamble']=[r"\usepackage{amsmath}"]
 import matplotlib.pyplot as plt
 
-def coreplot(ax, xvals, yvals, ystd, color, myls, mlabel):
+import insets
+
+def coreplot(ax, xvals, yvals, ystd, color, myls, mlabel, mzorder):
     yupper = np.minimum(yvals + ystd, 1)
     ylower = yvals - ystd
     color = color
@@ -30,10 +35,10 @@ def coreplot(ax, xvals, yvals, ystd, color, myls, mlabel):
         mydash = [_dash, _dashspace, _dashspace, _dashspace, _dot, _dashspace]
     mydash = [x * coef for x in mydash]
 
-    ax.plot(xvals, yvals, color=color, dashes = mydash, lw=4, label=mlabel)
+    ax.plot(xvals, yvals, color=color, dashes = mydash, lw=4, label=mlabel, zorder=mzorder)
     return
 
-def save_prcplot(filename, data, xlim, ylim, xticks, yticks):
+def save_prcplot(filename, data, phenodf, xlim, ylim, xticks, yticks, plot_legend = False, plot_inset = False):
     ''' Use the same plot params for different benchmarks.
     '''
 
@@ -61,13 +66,24 @@ def save_prcplot(filename, data, xlim, ylim, xticks, yticks):
         '#F13A13', # Vivid Reddish Orange
         '#232C16', # Dark Olive Green
         ]
-    
+
+    banskt_colors_hex = [
+        '#2D69C4', # blue 
+        '#FFB300', # Vivid Yellow
+        '#93AA00', # Vivid Yellowish Green
+        '#CC2529', # red
+        '#535154', # gray
+        '#6B4C9A', # purple
+        '#922428', # dark brown
+        '#948B3D', # olive
+        ]
+
     bordercolor = '#333333'
     borderwidth = 2
-    colors = kelly_colors_hex
+    colors = banskt_colors_hex
     figsize = (13, 12)
-    axis_font_size = 30
-    label_font_size = 25
+    axis_font_size = 35
+    label_font_size = 30
     legend_font_size = 25
     
     
@@ -80,34 +96,54 @@ def save_prcplot(filename, data, xlim, ylim, xticks, yticks):
                'linear':  'BVSR linear',
                'finemap': 'FINEMAP',
                'jam':     'JAM',
+               'bimbam':  'BIMBAM',
+               'snptest': 'META',
               }
     
-    mcolors = {'blore':   colors[4],
-               'probit':  colors[2],
-               'linear':  colors[3],
-               'finemap': colors[1],
-               'jam':     colors[16],
+
+    mcolors = {'blore':   colors[3],
+               'probit':  colors[0],
+               'linear':  colors[1],
+               'finemap': colors[2],
+               'jam':     colors[6],
+               'bimbam':  colors[5],
+               'snptest': colors[4],
               }
+
+
+    mzorder = {'blore':   100,
+               'probit':  50,
+               'linear':  40,
+               'finemap': 30,
+               'jam':     10,
+               'bimbam':  20,
+               'snptest': 60,
+              }
+
     
-    for key in ['blore', 'finemap', 'probit', 'linear', 'jam']:
+    for key in ['blore', 'probit', 'linear', 'finemap', 'jam', 'bimbam', 'snptest']:
         val = data[key]
         if not val == 0:
             if len(val[0]) > 0:
                 x = val[0]
                 y = val[2]
                 err = val[4]
-                coreplot(ax1, x, y, err, mcolors[key], 'solid', mlabels[key])
+                if plot_legend:
+                    coreplot(ax1, x, y, err, mcolors[key], 'solid', mlabels[key], mzorder[key])
+                else:
+                    coreplot(ax1, x, y, err, mcolors[key], 'solid', None, mzorder[key])
                 y = val[1]
                 err = val[3]
-                coreplot(ax2, x, y, err, mcolors[key], 'dashed', None)
+                coreplot(ax2, x, y, err, mcolors[key], 'dashed', None, mzorder[key])
             
     mxlabel = r'Top ranked SNPs'
     my1label = r'Recall'
     my2label = r'Precision'
     
-    ax1.set_xlabel(mxlabel, {'size': axis_font_size, 'color': bordercolor}, labelpad = 15)
-    ax1.set_ylabel(my1label, {'size': axis_font_size, 'color': bordercolor}, labelpad = 20)
-    ax2.set_ylabel(my2label, {'size': axis_font_size, 'color': bordercolor}, labelpad = 20)
+    font_properties = {'family':'sans-serif', 'weight': 'bold', 'size': axis_font_size, 'color':bordercolor}
+    ax1.set_xlabel(mxlabel, font_properties, labelpad = 15)
+    ax1.set_ylabel(my1label, font_properties, labelpad = 20)
+    ax2.set_ylabel(my2label, font_properties, labelpad = 20)
     
     for ax in [ax1, ax2]:
      
@@ -118,7 +154,7 @@ def save_prcplot(filename, data, xlim, ylim, xticks, yticks):
         
         h, l = ax.get_legend_handles_labels()
         if len(l) > 0:
-            legend = ax.legend(loc='upper right', bbox_to_anchor=(0.98, 0.5),
+            legend = ax.legend(loc='upper left', bbox_to_anchor=(0.02, 0.98),
                                handlelength = 3.0,
                                handletextpad = 2.0,
                                markerscale=5,
@@ -142,11 +178,22 @@ def save_prcplot(filename, data, xlim, ylim, xticks, yticks):
                        labelcolor = bordercolor,
                        bottom = True, top = False, left = True, right = True
                       )
+        font_properties = {'family':'sans-serif', 'weight': 'bold', 'size': label_font_size}
+        xticks = ax.get_xticks()
+        yticks = ax.get_yticks()
+        xticklabels = ['{:g}'.format(x) for x in xticks]
+        yticklabels = ['{:3.1f}'.format(x) for x in yticks]
+        ax.set_xticklabels(xticklabels, font_properties)
+        ax.set_yticklabels(yticklabels, font_properties)
+
         for side, border in ax.spines.items():
             border.set_linewidth(borderwidth)
             border.set_color(bordercolor)
         ax.grid(color='dimgray', lw=0.5, alpha=0.5)
     
     plt.tight_layout()
+    if plot_inset:
+        iax = insets.add_vert(fig, ax1, 0.4, 0.4, 0.55, 0.07, [1, 3, 1])
+        insets.coreplot(iax, phenodf, bordercolor, borderwidth, label_font_size, axis_font_size)
     plt.savefig(filename, bbox_inches='tight')
     plt.show()
