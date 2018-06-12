@@ -28,7 +28,7 @@ if [ ! -z ${NLOCI} ]; then
 fi
 
 
-BLORE_JOBSUBDIR="blore_cvar"
+BLORE_JOBSUBDIR="blore"
 SNPTEST_JOBSUBDIR="snptest"
 FINEMAP_JOBSUBDIR="finemap"
 PHENO_JOBSUBDIR="makepheno"
@@ -38,7 +38,7 @@ JAM_JOBSUBDIR="jam"
 BIMBAM_JOBSUBDIR="bimbam"
 CAVIARBF_JOBSUBDIR="caviarbf"
 
-BLORE_RESDIR="blore_cvar"
+BLORE_RESDIR="blore"
 
 for (( SIM=$START; SIM<=$END; SIM++ )); do
 

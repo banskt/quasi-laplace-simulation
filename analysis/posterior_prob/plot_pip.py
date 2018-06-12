@@ -72,6 +72,14 @@ def parse_args():
                         action='store_true',
                         help='if set, plots the inset of logistic vs linear model from combined study')
 
+    parser.add_argument('--thin',
+                        default=5,
+                        type=int,
+                        dest='thinby',
+                        metavar='INT',
+                        help='factor to thin the scatterplot of logistic vs linear model')
+
+
     parser.add_argument('--legend',
                         dest='plot_legend',
                         action='store_true',
@@ -134,7 +142,8 @@ else:
 print ("Reading complete.")
 xlim = [0, int(0.15 * nmax)]
 ylim = [0, 0.9]
+xtextpos = [xlim[1]/6, xlim[1] - (xlim[1] / 3)]
 xticks = None
-yticks = np.arange(0, 0.9, 0.1)
+yticks = np.arange(0, 0.91, 0.1)
 
-stylesheet.save_prcplot(outfile, plotvals, phenodf, xlim, ylim, xticks, yticks, opts.plot_legend, opts.plot_inset)
+stylesheet.save_prcplot(outfile, plotvals, phenodf, xlim, ylim, xtextpos, xticks, yticks, opts.plot_legend, opts.plot_inset, opts.thinby)

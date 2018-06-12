@@ -15,6 +15,7 @@ SUBDIR="${CURDIR}/utils"
 PLOT_JOBSUBDIR="${JOBSUBDIR}/getplots"
 INSETFLAG="--inset"
 LEGENDFLAG="--legend"
+THINFLAG="--thin 5"
 CREDIBLE="true"
 WHICH=""
 if [ "${bBloreMeta}" = "true" ]; then WHICH+="blore "; fi
@@ -36,6 +37,7 @@ for CRED in ${CREDIBLE}; do
     OUTPREFIX="pip_prc_${PHENO_SIM_TYPE}_h${THISH2}_c${NCAUSAL}_l${THISL}"
 
     if [ ! -z ${NLOCI} ]; then OUTPREFIX="${OUTPREFIX}_${NPHENO}pheno_${NPHENO}summary_${NLOCI}loci"; USELOCI="${BASEDIR}/LOCUSNAMES.${NLOCI}NLOCI"; fi
+    if [ "${FIX_NCASE}" = "true" ]; then OUTPREFIX="${OUTPREFIX}_fixcase"; THINFLAG="--thin 2"; fi
     if [ "${USE_AGESEX}" = "true" ]; then OUTPREFIX="${OUTPREFIX}_cov"; fi
     if [ "${CRED}" = "true" ];       then OUTPREFIX="${OUTPREFIX}_cred"; CREDFLAG="--credible"; fi
     
@@ -48,6 +50,7 @@ for CRED in ${CREDIBLE}; do
          s|__INSET_|\"${INSETFLAG}\"|g;
          s|_LEGEND_|\"${LEGENDFLAG}\"|g;
          s|_WHICH__|\"${WHICH}\"|g;
+         s|_THINBY_|\"${THINFLAG}\"|g;
          s|_SIMDIR_|${SIMDIR}|g;
          s|_LOCIDIR|${DOSAGEDIR}|g;
          s|_LOCUSF_|${USELOCI}|g;
@@ -55,7 +58,7 @@ for CRED in ${CREDIBLE}; do
          s|_WORKDIR|${POSTPROBDIR}|g;
          s|_PLT_PIP|${PLOTPIP}|g;
         " ${MASTER_BSUBDIR}/getplots.bsub > ${PLOT_JOBNAME}.bsub
-    bsub < ${PLOT_JOBNAME}.bsub
+    #bsub < ${PLOT_JOBNAME}.bsub
 done
 
 cd ${CURDIR}

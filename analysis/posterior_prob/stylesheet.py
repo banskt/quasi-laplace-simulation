@@ -38,7 +38,18 @@ def coreplot(ax, xvals, yvals, ystd, color, myls, mlabel, mzorder):
     ax.plot(xvals, yvals, color=color, dashes = mydash, lw=4, label=mlabel, zorder=mzorder)
     return
 
-def save_prcplot(filename, data, phenodf, xlim, ylim, xticks, yticks, plot_legend = False, plot_inset = False):
+
+def write_text(ax, mstring, xtext, shift, x, y, textsize):
+    ytext = np.interp(xtext, x, y)
+    nextidx = np.where(x > xtext)[0][5]
+    textslope = (y[nextidx] - ytext) / (x[nextidx] - xtext)
+    textangle = np.degrees(np.arctan(textslope))
+    textangle_gca = ax.transData.transform_angles(np.array((textangle,)), np.array([xtext, ytext]).reshape((1,2)) )[0]
+    ax.text(xtext, ytext + shift, mstring, rotation=textangle_gca, rotation_mode='anchor', size=textsize)
+    return
+
+
+def save_prcplot(filename, data, phenodf, xlim, ylim, xtextpos, xticks, yticks, plot_legend = False, plot_inset = False, thinby = 5):
     ''' Use the same plot params for different benchmarks.
     '''
 
@@ -81,15 +92,21 @@ def save_prcplot(filename, data, phenodf, xlim, ylim, xticks, yticks, plot_legen
     bordercolor = '#333333'
     borderwidth = 2
     colors = banskt_colors_hex
-    figsize = (13, 12)
+    #figsize = (13, 12)
+    figsize = (12, 12)
     axis_font_size = 35
     label_font_size = 30
     legend_font_size = 25
+    labelshift = 0.02
     
     
     fig = plt.figure(figsize = figsize)
     ax1 = fig.add_subplot(111)
-    ax2 = ax1.twinx()
+    #ax2 = ax1.twinx()
+    for ax in [ax1]:
+        if xlim is not None: ax.set_xlim(xlim)
+        if ylim is not None: ax.set_ylim(ylim)
+
     
     mlabels = {'blore':   'B-LORE',
                'probit':  'BVSR probit',
@@ -132,23 +149,26 @@ def save_prcplot(filename, data, phenodf, xlim, ylim, xticks, yticks, plot_legen
                     coreplot(ax1, x, y, err, mcolors[key], 'solid', mlabels[key], mzorder[key])
                 else:
                     coreplot(ax1, x, y, err, mcolors[key], 'solid', None, mzorder[key])
+                if key == 'blore':
+                    write_text(ax1, 'Recall', xtextpos[1], labelshift, x, y, axis_font_size)
                 y = val[1]
                 err = val[3]
-                coreplot(ax2, x, y, err, mcolors[key], 'dashed', None, mzorder[key])
+                #coreplot(ax2, x, y, err, mcolors[key], 'dashed', None, mzorder[key])
+                coreplot(ax1, x, y, err, mcolors[key], 'dashed', None, mzorder[key])
+                if key == 'blore':
+                    write_text(ax1, 'Precision', xtextpos[0], labelshift, x, y, axis_font_size)
             
-    mxlabel = r'Top ranked SNPs'
-    my1label = r'Recall'
-    my2label = r'Precision'
+    mxlabel = r'Top ranked SNPs per locus'
+    my1label = r'Recall / Precision'
+    #my2label = r'Precision'
     
     font_properties = {'family':'sans-serif', 'weight': 'bold', 'size': axis_font_size, 'color':bordercolor}
     ax1.set_xlabel(mxlabel, font_properties, labelpad = 15)
     ax1.set_ylabel(my1label, font_properties, labelpad = 20)
-    ax2.set_ylabel(my2label, font_properties, labelpad = 20)
-    
-    for ax in [ax1, ax2]:
+
+    #for ax in [ax1, ax2]:
+    for ax in [ax1]:
      
-        if xlim is not None: ax.set_xlim(xlim)
-        if ylim is not None: ax.set_ylim(ylim)
         if xticks is not None: ax.set_xticks(xticks)
         if yticks is not None: ax.set_yticks(yticks)
         
@@ -193,7 +213,7 @@ def save_prcplot(filename, data, phenodf, xlim, ylim, xticks, yticks, plot_legen
     
     plt.tight_layout()
     if plot_inset:
-        iax = insets.add_vert(fig, ax1, 0.4, 0.4, 0.55, 0.07, [1, 3, 1])
-        insets.coreplot(iax, phenodf, bordercolor, borderwidth, label_font_size, axis_font_size)
+        iax = insets.add_vert(fig, ax1, 0.5, 0.5, 0.45, 0.03, [1, 3, 1])
+        insets.coreplot(iax, phenodf, bordercolor, borderwidth, label_font_size, axis_font_size, thinby)
     plt.savefig(filename, bbox_inches='tight')
     plt.show()

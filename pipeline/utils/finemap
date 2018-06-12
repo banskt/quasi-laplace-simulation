@@ -11,6 +11,7 @@
              s|_NSAMTOT|${NSAMPLE_TOT}|g;
              s|_NCAUSAL|${NC}|g;
              s|_USELOCI|${USELOCI}|g;
+             s|_CC_RAT_|${CASE_CONTROL_RATIO}|g;
              s|_FINEMAP|${FINEMAP}|g;
             " ${MASTER_BSUBDIR}/finemap.bsub > ${FINEMAP_JOBNAME}.bsub
         if [ "${bMeta}" = "true" ]; then

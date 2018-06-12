@@ -65,6 +65,7 @@ HERITABILITY | Proportion of phenotypic variance explained by genotype | Float (
 C_PROP | Proportion of causal SNPs | Float (0 -- 1) | 0.005
 PHENO_SIM_TYPE | Type of distribution used for sampling β | String (normal, fixed, bimodal or studentsT) | "normal"
 CASE_CONTROL_RATIO | Ratio of cases to controls | Float (0 -- 1) | 1.0
+FIX_NCASE | If true, vary the number of cases; else vary the number of controls | Boolean | false
 USE_AGESEX | Use age & sex as covariates in simulation | Boolean | false
 NCAUSAL | Number of allowed causal SNPs in B-LORE | List of integers | "2 3"
 NPIMASS | Number of allowed causal SNPs in PIMASS | List of integers | "2"

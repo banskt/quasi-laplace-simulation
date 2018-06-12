@@ -1,0 +1,49 @@
+#!/bin/bash
+
+START=821
+END=840
+HERITABILITY=0.4
+C_PROP=0.005
+PHENO_SIM_TYPE="normal" # fixed, bimodal, studentsT, normal
+CASE_CONTROL_RATIO="1.00"
+FIX_NCASE=true
+USE_AGESEX=false
+NCAUSAL="2"
+NPIMASS="2"
+NFINEMAP="2"
+NCAVIARBF="2"
+NGEMMA="2"
+NBIMBAM="2"
+MODEL_PIMASS="linear probit"
+MODEL_GEMMA="linear probit"
+MUVAR="0"
+USE_BLORE_RES=false
+
+# Which methods to run?
+bDeleteOld=false
+bMakePheno=false
+bRegCov=false
+bBloreSumm=false
+bBloreMeta=false
+bSnptest=false
+bMeta=false
+bFinemap=false
+bPimass=false
+bGemma=false
+bJam=false
+bBimbam=false
+bCaviarbf=false
+
+#bDeleteOld=true
+bMakePheno=true
+#bRegCov=true
+bBloreSumm=true
+bBloreMeta=true
+bSnptest=true
+bMeta=true
+bFinemap=true
+bPimass=true
+#bGemma=true
+#bJam=true
+#bBimbam=true
+#bCaviarbf=true

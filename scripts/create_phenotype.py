@@ -100,6 +100,12 @@ def parse_args():
                         help='whether to use age and sex as covariates')
 
 
+    parser.add_argument('--reduce',
+                        dest='reduce_cases',
+                        action='store_true',
+                        help='whether to reduce the number of cases to N/10 (used together with ccratio)')
+
+
     parser.add_argument('--cvar',
                         dest='use_cvar',
                         action='store_true',
@@ -353,18 +359,30 @@ for i, study in enumerate(studies):
     # Select liabilities above the threshold of normal distribution truncating at K (disease prevalence)
     cutoff = scipy.stats.norm.ppf(1 - opts.prevalence)
     cases = np.where(liability >= cutoff)[0]
+    ctrls = np.where(liability <  cutoff)[0]
     pheno = np.zeros(nsample, dtype=int)
     pheno[cases] = 1
     keepsample = np.ones(nsample, dtype=bool)
-    ncase = int(cases.shape[0])
-    nctrl = int(nsample - ncase)
-    if ccratio < 1.0:
-        ncase = int(nctrl * ccratio)
-        caseprob = 1 - scipy.stats.norm.pdf(liability[cases], 0, 1)
-        normed_caseprob = caseprob / np.sum(caseprob)
-        choosecase = np.random.choice(cases, size=ncase, replace=False, p=normed_caseprob)
+
+    if opts.reduce_cases:
+        ncase = int(nsample / 10)
+        nctrl = int(ncase / ccratio)
+        choosecase = np.random.choice(cases, size=ncase, replace=False)
         droppedcase = np.array([x for x in cases if x not in choosecase])
         keepsample[droppedcase] = False
+        choosecontrol = np.random.choice(ctrls, size=nctrl, replace=False)
+        droppedcontrol = np.array([x for x in ctrls if x not in choosecontrol])
+        keepsample[droppedcontrol] = False
+    else:
+        ncase = int(cases.shape[0])
+        nctrl = int(nsample - ncase)
+        if ccratio < 1.0:
+            ncase = int(nctrl * ccratio)
+            caseprob = 1 - scipy.stats.norm.pdf(liability[cases], 0, 1)
+            normed_caseprob = caseprob / np.sum(caseprob)
+            choosecase = np.random.choice(cases, size=ncase, replace=False, p=normed_caseprob)
+            droppedcase = np.array([x for x in cases if x not in choosecase])
+            keepsample[droppedcase] = False
 
     # Copy the sample file with new phenotype
     k = 0

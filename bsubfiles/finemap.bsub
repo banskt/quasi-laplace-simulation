@@ -13,9 +13,13 @@ FINEMAP=_FINEMAP
 LDDIR=_LD_DIR_
 NTOT=_NSAMTOT
 USELOCI=_USELOCI
+CCRATIO=_CC_RAT_
 
 OUTDIR="${SIMDIR}/finemap/c${NC}"
 METADIR="${SIMDIR}/snptest/meta"
+
+## 0.05 / sqrt(phi (1 - phi)), where phi = l / (1 + l), where l = cases / controls = CCRATIO
+BINARYSTD=`echo $CCRATIO | awk '{p = $1 / (1 + $1); m = 0.05 / sqrt(p * (1 - p)); print m}'` 
 
 if [   -d ${OUTDIR} ]; then rm -rf ${OUTDIR}; fi
 if [ ! -d ${OUTDIR} ]; then mkdir -p ${OUTDIR}; fi
@@ -44,7 +48,7 @@ while read FBASE; do
 done < ${USELOCI}
 
 echo "bProgram Start: " `date +%s`
-${FINEMAP} --sss --in-files data --n-causal-max ${NC}
+${FINEMAP} --sss --in-files data --n-causal-max ${NC} --prior-std ${BINARYSTD}
 echo "bProgram End: " `date +%s`
 rm -rf *.ld
 

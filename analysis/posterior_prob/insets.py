@@ -39,7 +39,7 @@ def visual_aid(data, xvals, nbins = 10):
         y[i] = np.median(ysplit)
     return x, y
 
-def coreplot(iax, df, bordercolor, borderwidth, label_font_size, axis_font_size):
+def coreplot(iax, df, bordercolor, borderwidth, label_font_size, axis_font_size, thinby = 5):
     
     nsample = df.shape[0]
     xvals   = np.array(df['xval'])
@@ -61,19 +61,20 @@ def coreplot(iax, df, bordercolor, borderwidth, label_font_size, axis_font_size)
     nctrl = nctrl / nsample
     
     colors = ['#C10020', '#FF6800', '#007D34', '#93AA00', ]
+    lightgray = '#EAEAEA'
 
     # Plot the histograms in iax[0] and iax[2]
     x = [(bins[i] + bins[i+1]) / 2 for i in range(bins.shape[0] - 1)] # centers of the bins
     xnew = np.linspace(x[0], x[-1], 101) # for a smooth plot
     
     f2 = interp1d(x, nctrl, kind='cubic')
-    iax[0].plot(xnew, -f2(xnew), color=bordercolor, lw=borderwidth, zorder=10) # plotting inverted distribution
-    iax[0].fill_between(xnew, -f2(xnew), 0, color=bordercolor, alpha=0.1, zorder=5)
+    iax[0].plot(xnew, -f2(xnew), color=bordercolor, alpha = 0.4, lw=borderwidth, zorder=10) # plotting inverted distribution
+    iax[0].fill_between(xnew, -f2(xnew), 0, color=lightgray, zorder=5)
     ctrlmax = max(f2(xnew))
 
     f2 = interp1d(x, ncase, kind='cubic')
-    iax[2].plot(xnew,  f2(xnew), color=bordercolor, lw=borderwidth, zorder=10)
-    iax[2].fill_between(xnew, f2(xnew), 0, color=bordercolor, alpha=0.1, zorder=5)
+    iax[2].plot(xnew,  f2(xnew), color=bordercolor, alpha = 0.4, lw=borderwidth, zorder=10)
+    iax[2].fill_between(xnew, f2(xnew), 0, color=lightgray, zorder=5)
     casemax = max(f2(xnew))
     
     ymax = max(ctrlmax, casemax) * 1.1
@@ -84,16 +85,20 @@ def coreplot(iax, df, bordercolor, borderwidth, label_font_size, axis_font_size)
 
         
     # Plot the scatterplots and visual aids
-    case_idx = np.random.choice(case_xvals.shape[0], int(case_xvals.shape[0] / 5), replace=False)
-    ctrl_idx = np.random.choice(ctrl_xvals.shape[0], int(ctrl_xvals.shape[0] / 5), replace=False)
+    case_idx = np.random.choice(case_xvals.shape[0], int(case_xvals.shape[0] / thinby), replace=False)
+    ctrl_idx = np.random.choice(ctrl_xvals.shape[0], int(ctrl_xvals.shape[0] / thinby), replace=False)
+    #iax[1].scatter(case_xvals[case_idx], case_logprob[case_idx], alpha=0.4, s=1, color=colors[0], zorder=30)
+    #iax[1].scatter(ctrl_xvals[ctrl_idx], ctrl_logprob[ctrl_idx], alpha=0.4, s=1, color=colors[1], zorder=30)
+    #iax[1].scatter(case_xvals[case_idx], case_linpred[case_idx], alpha=0.4, s=1, color=colors[2], zorder=20)
+    #iax[1].scatter(ctrl_xvals[ctrl_idx], ctrl_linpred[ctrl_idx], alpha=0.4, s=1, color=colors[3], zorder=20)
     iax[1].scatter(case_xvals[case_idx], case_logprob[case_idx], alpha=0.4, s=1, color=colors[0], zorder=30)
-    iax[1].scatter(ctrl_xvals[ctrl_idx], ctrl_logprob[ctrl_idx], alpha=0.4, s=1, color=colors[1], zorder=30)
-    iax[1].scatter(case_xvals[case_idx], case_linpred[case_idx], alpha=0.4, s=1, color=colors[2], zorder=20)
-    iax[1].scatter(ctrl_xvals[ctrl_idx], ctrl_linpred[ctrl_idx], alpha=0.4, s=1, color=colors[3], zorder=20)
+    iax[1].scatter(ctrl_xvals[ctrl_idx], ctrl_logprob[ctrl_idx], alpha=0.4, s=1, color=colors[2], zorder=30)
     x, y = visual_aid(logprob, xvals, nbins = 10)
-    iax[1].plot(x, y, lw = 3, color= bordercolor, dashes = [5, 4], zorder=40)
+    #iax[1].plot(x, y, lw = 3, color= bordercolor, dashes = [5, 4], zorder=40)
+    iax[1].plot(x, y, lw = 3, color= bordercolor, zorder=40)
     x, y = visual_aid(linpred, xvals, nbins = 10)
-    iax[1].plot(x, y, lw = 3, color= bordercolor, dashes = [5, 4], zorder=40)
+    #iax[1].plot(x, y, lw = 3, color= bordercolor, dashes = [5, 4], zorder=40)
+    iax[1].plot(x, y, lw = 3, color= bordercolor, zorder=40)
     
     iax[1].set_ylim(-0.2, 1.2)
     iax[1].set_yticks([0.0, 0.5, 1.0])
@@ -118,8 +123,8 @@ def coreplot(iax, df, bordercolor, borderwidth, label_font_size, axis_font_size)
     for ax in iax:
         ax.set_xlim(xmin, xmax)
         
-    #mylabel = r'$\boldsymbol{p(\phi = 1)}$'
-    mylabel = r"$\boldsymbol{y_{\text{pred}}}$" + " or\n" + r"$\boldsymbol{p(\phi = 1)}$"
+    mylabel = r'$\boldsymbol{p(\phi = 1)}$'
+    #mylabel = r"$\boldsymbol{y_{\text{pred}}}$" + " or\n" + r"$\boldsymbol{p(\phi = 1)}$"
     mxlabel = r'$\boldsymbol{\sum_i x_i \beta_i}$'
     iax[1].set_ylabel(mylabel, {'size': axis_font_size, 'color': bordercolor}, labelpad = 15)
 

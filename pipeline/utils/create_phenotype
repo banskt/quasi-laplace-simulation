@@ -19,6 +19,7 @@
             s|_SO_PRE_|${SAMPLEPREFIX}|g;
             s|_C_PROP_|${C_PROP}|g;
             s|_USE_COV|${USE_AGESEX}|g;
+            s|_FIX_CSE|${FIX_NCASE}|g;
             s|_CC_RAT_|${CASE_CONTROL_RATIO}|g;
            " ${MASTER_BSUBDIR}/create_phenotype.bsub > ${PHENO_JOBNAME}.bsub
     bsub < ${PHENO_JOBNAME}.bsub
